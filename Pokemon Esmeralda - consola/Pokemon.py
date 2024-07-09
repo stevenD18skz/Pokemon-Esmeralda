@@ -139,16 +139,23 @@ class Pokemon:
 
 
     def Establecer_IV(self):#✔✔✔
-        lista_IV = []
-        for x in range(6):
-            lista_IV.append(random.randint(1, 32))
-        
-        self.IVs = lista_IV
+        self.IVs = [random.randint(1, 32) for _ in range(6)]
 
 
 
 
     def aumentar(self, Base, num, Naturaleza):#✔✔✔
+        """
+        Calcula el valor de un stat del Pokémon ajustado por su naturaleza.
+
+        Args:
+            Base (int): El valor base del stat.
+            num (int): El índice del stat en las listas de IVs y puntos de esfuerzo.
+            Naturaleza (float): El multiplicador de la naturaleza para el stat.
+
+        Returns:
+            int: El valor ajustado del stat, redondeado al entero más cercano.
+        """
         han = (((((2*Base)+self.IVs[num]+(self.puntosDeEzfuerzo[num]/4))*self.nivel)/100)+5)*Naturaleza
         return round(han)
 
@@ -156,7 +163,17 @@ class Pokemon:
 
 
     def Establecer_Stats(self):#✔✔✔
-        # Calcula y establece los stats finales del Pokemon
+        """
+        Calcula y establece los stats finales del Pokémon.
+
+        Esta función calcula los valores finales de los stats del Pokémon, 
+        incluyendo PS (Puntos de Salud), ataque, ataque especial, defensa, 
+        defensa especial y velocidad, ajustándolos por los valores base, 
+        IVs, puntos de esfuerzo y naturaleza.
+
+        Returns:
+            None
+        """
         vida_base = ((((2*self.B_ps)+self.IVs[0]+(self.puntosDeEzfuerzo[0]/4))*self.nivel)/100)+self.nivel+10
         self.ps = round(vida_base)
         self.M_ps = round(vida_base)
@@ -170,7 +187,16 @@ class Pokemon:
 
 
     def Establecer_exp(self, metodo, nivel):#✔✔✔
-        # Establece la experiencia del Pokemon según un método y nivel dados
+        """
+        Establece la experiencia del Pokémon según un método y nivel dados.
+
+        Args:
+            metodo (str): El método de crecimiento de experiencia. Puede ser "Rapido", "Medio", "Lento" o "Parabolico".
+            nivel (int): El nivel del Pokémon para el cual se calcula la experiencia.
+
+        Returns:
+            int: La cantidad de experiencia necesaria para alcanzar el nivel dado.
+        """
         formulas = {
             "Rapido": (4 * nivel ** 3) // 5,
             "Medio": nivel ** 3,

@@ -149,7 +149,7 @@ def crearItem(itemDeseado):
 
 class Mochila:
     def __init__(self):
-        self.bolsilloDeMedicina = [[crearItem("Poción"),30]]
+        self.bolsilloDeMedicina = [[crearItem("Poción"),30], [crearItem("Limonada"),30]]
         self.bolsilloDePokeBalls = [[crearItem("Ultraball"),20]]
 
 
@@ -173,11 +173,12 @@ class Mochila:
         for add in range(len(self.bolsilloAbierto)):
             if self.bolsilloAbierto[add][0].getNombre() == obj_a_guardar.getNombre():
                 self.bolsilloAbierto[add][1] += cant
-                print(f"Las {cant} {obj_a_guardar.getNombre()} han sido añadidas a tu bolsa, tienes en total {self.bolsilloAbierto[add][1]}")
-                return
-            
-        self.bolsilloAbierto.append([obj_a_guardar, cant])
-        print(f"has adquirido un nuevo objeto\nLas {cant} {obj_a_guardar.getNombre()} han sido añadidas a tu bolsa, tienes en total {self.bolsilloAbierto[add][1]}")
+                return f"Las {cant} {obj_a_guardar.getNombre()} han sido añadidas a tu bolsa, tienes en total {self.bolsilloAbierto[add][1]}"
+                
+        
+        #si es un objeto que no habia antes
+        self.bolsilloAbierto.insert(0, [obj_a_guardar, cant])
+        return f"has adquirido un nuevo objeto\nLas {cant} {obj_a_guardar.getNombre()} han sido añadidas a tu bolsa, tienes en total {self.bolsilloAbierto[0][1]}"
 
 
 
@@ -192,9 +193,12 @@ class Mochila:
 
     def tirar(self, objetoAtirar, cantidad):
         #list(map(lambda x: print(x), self.bolsilloAbierto))
-        for x in self.bolsilloAbierto:
-            if x[0] == objetoAtirar:
-                x[1] -= cantidad
+        for objeto in self.bolsilloAbierto:
+            if objeto[0] == objetoAtirar:
+                objeto[1] -= cantidad
+
+
+        
 
 
 

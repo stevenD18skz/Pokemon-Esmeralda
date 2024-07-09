@@ -82,12 +82,13 @@ class AlgoritmoDeBatalla:
     def mensaje_game(self, mensaje):
         self.imprimir_escenario_de_batalla()
         print(f"{mensaje}")
-        time.sleep(2)
+        input(">>")
+        #time.sleep(2)
 
     def mensajes_exterior(self, mensajes):
         for mensaje in mensajes:
             self.mensaje_game(mensaje)
-            time.sleep(2)
+            #time.sleep(2)
 
 
 
@@ -154,16 +155,17 @@ class AlgoritmoDeBatalla:
             self.imprimir_escenario_de_batalla()
             print(f"⚔⚔¿que ataque deberia usar {self.QUESI.getNombre()}⚔⚔:")
             self.QUESI.mostrarAtaques()
-            seleccion_ataque = int(input(f"\n{BACK_OPTION}. Atras\n⚜== ")) - 1
+            try:
+                seleccion_ataque = int(input(f"\n{BACK_OPTION}. Atras\n⚜== ")) - 1
+            except:
+                self.mensaje_game("❌❌❌Escoge una Opcion valida porfavor❌❌❌")
+                continue
+
 
             if seleccion_ataque + 1 == BACK_OPTION:
                 return None
 
-            try:
-                selected_attack = self.QUESI.getMovimiento(seleccion_ataque)
-            except IndexError:
-                self.mensaje_game("❌❌❌Escoge una Opcion valida porfavor❌❌❌")
-                continue
+            selected_attack = self.QUESI.getMovimiento(seleccion_ataque)
 
             if selected_attack.getNombre() == "":
                 self.mensaje_game("❌❌❌Escoge una Opcion valida porfavor❌❌❌")
@@ -256,10 +258,10 @@ class AlgoritmoDeBatalla:
                 if puede_moverse:
                     pass
                 else:
-                    print("🧶🧶🧶Es el momento de atacar de " + atacante.getNombre() + " 🧶🧶🧶")
-                    print(f"🥊🥊🥊{atacante.getNombre()} ah usado el movimiento {atacante.getMovimiento(datosParaAtacar[atacante][1]).getNombre()}🥊🥊🥊")
-                    atacante.Atacar(datosParaAtacar[atacante][2], datosParaAtacar[atacante][1])
-                    print(f"💔💔💔los ps de {datosParaAtacar[atacante][2].getNombre()} quedan en {datosParaAtacar[atacante][2].getPs()}💔💔💔")
+                    self.mensaje_game("🧶🧶🧶Es el momento de atacar de " + atacante.getNombre() + " 🧶🧶🧶")
+                    self.mensaje_game(f"🥊🥊🥊{atacante.getNombre()} ah usado el movimiento {atacante.getMovimiento(datosParaAtacar[atacante][1]).getNombre()}🥊🥊🥊")
+                    self.mensajes_exterior(atacante.Atacar(datosParaAtacar[atacante][2], datosParaAtacar[atacante][1]))
+                    self.mensaje_game(f"💔💔💔los ps de {datosParaAtacar[atacante][2].getNombre()} quedan en {datosParaAtacar[atacante][2].getPs()}💔💔💔")
 
 
 
@@ -271,8 +273,6 @@ class AlgoritmoDeBatalla:
         self.QUESI = self.PLAYER.equipo_Pokemon[0]
         self.KAIDO = pokemonRival
         self.PokemonesQueLucharon.append(self.QUESI)
-        
-        self.mensaje_game(f"pokemon: {self.QUESI} nivel{self.QUESI.getNivel()}, vida:{self.QUESI.getPs()}")
 
         while self.QUESI.getPs() > 0 and self.KAIDO.getPs() > 0:
             mainSeleccion = 0
