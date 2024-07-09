@@ -1,6 +1,7 @@
 from Algoritmo_De_Batalla import *
 from Bosque import *
 from Tienda import *
+from data import mensaje_game, mensajes_exterior
 #OPCION 3
 """
 #1.gengar
@@ -35,23 +36,27 @@ COSAS POR HACER
 
 steven = Entrenadores("Steven", 100000, 15, "entrenador pokemon", Mochila(), crear_pokemon_entrenador("Bulbasaur"), crear_pokemon_entrenador("Ivysaur"), crear_pokemon_entrenador("Bulbasaur"), crear_pokemon_entrenador("Fennekin"), crear_pokemon_entrenador("Sobble"), crear_pokemon_entrenador("Oshawott"))
 while True:
-	eleccion = input(f"1.ir al bosque\n2.luchar contra algun entrenador\n3.ir a la tineda\nE.Menu\nX.salir del juego\n==")
+	eleccion = input(f"{mensaje_game(f"1.ir al bosque\n2.luchar contra algun entrenador\n3.ir a la tineda\nE.Menu\nX.salir del juego", isInput=True)}")
+
 
 	if eleccion == "1":
 		BosqueViejoPokemon().iniciar_combate_pokemon(steven)
+
 
 	elif eleccion == "2":
 		Lance = crear_oponente("Lance")
 		figth = AlgoritmoDeBatalla()
 		figth.LUCHA_CONTRA_ENTRENADOR(steven, Lance)
 
+
 	elif eleccion == "3":
 		store = Tienda()
 		store.recibir_jugador(steven)
 
+
 	elif eleccion.upper() == "E":
 		while True:
-			eleccion_menu = input(f"1.POKEDEX\n2.POKEMONS\n3.MOCHILA\n4.{steven.getNombre()}\n5.GUARDAR\n6.OPCIONES\n7.SALIR\n==")
+			eleccion_menu = input(f"{mensaje_game(f"1.POKEDEX\n2.POKEMONS\n3.MOCHILA\n4.{steven.getNombre()}\n5.GUARDAR\n6.OPCIONES\n7.SALIR", isInput=True)}")
 			if eleccion_menu == "1":
 				print("aun no disponible")
 			if eleccion_menu == "2":
@@ -69,4 +74,3 @@ while True:
 
 	elif eleccion.upper() == "X":
 		break
-        

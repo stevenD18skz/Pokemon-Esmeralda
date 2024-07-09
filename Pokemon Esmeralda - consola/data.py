@@ -1,20 +1,14 @@
 import os
 
-
-lista = [1,2,3,4]
-lista.insert(0, 6)
-print(lista)
-
-
-if not (0):
-    print("hola")    
-
-
 def mensaje_game(mensaje, funcion=None, isInput=False):
     os.system('cls' if os.name == 'nt' else 'clear')
-    funcion() if funcion else 22222
-    print(f"{mensaje}")
-    input("-------------") if not isInput else 22222
+
+    funcion() if funcion else None
+
+    if not isInput:
+        print(f"{mensaje}")
+    else:
+        print(f"{mensaje}\n🔱⚜️ ==", end="")
     return ""
     #time.sleep(2)
 

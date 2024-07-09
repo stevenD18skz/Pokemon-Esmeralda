@@ -35,15 +35,15 @@ class Tienda:
 
 	def comprar(self):#✔✔✔
 		while True:
-			eleccion = int(input(f"{mensaje_game("Que producto quieres llevarte?", self.mostrar_inventario, isInput=True)}\n==")) - 1
+			eleccion = int(input(f"{mensaje_game("Que producto quieres llevarte?", self.mostrar_inventario, isInput=True)}")) - 1
 			
 			if eleccion > 0 or eleccion < len(self.inventario):
 				item_comprado = crearItem(self.inventario[eleccion][0])
 
-				cantidad = int(input(f"{mensaje_game(f"{self.inventario[eleccion][0]}?, buena eleccion\nCuantas quieres llevarte", self.mostrar_inventario, isInput=True)}\n=="))
+				cantidad = int(input(f"{mensaje_game(f"{self.inventario[eleccion][0]}?, buena eleccion\nCuantas quieres llevarte", self.mostrar_inventario, isInput=True)}"))
 
 
-				confirmacion = int(input(f"{mensaje_game(f"Seria un total de {item_comprado.getPrecioCompra()*cantidad}, estas seguro?\n1.Si\n2.No", self.mostrar_inventario, isInput=True)}\n=="))
+				confirmacion = int(input(f"{mensaje_game(f"Seria un total de {item_comprado.getPrecioCompra()*cantidad}, estas seguro?\n1.Si\n2.No", self.mostrar_inventario, isInput=True)}"))
 
 				if not (confirmacion-1):
 					if self.cliente.getDinero() >= item_comprado.getPrecioCompra()*cantidad:
@@ -107,7 +107,7 @@ class Tienda:
 				2:self.vender,
 				3:self.salir
 			}
-			opcion_elegida = int(input(f"{mensaje_game("¿En que puedo ayudarte?\n1.Comprar\n2.Vender\n3.Salir", self.mostrar_inventario, isInput=True)}\n=="))
+			opcion_elegida = int(input(f"{mensaje_game("¿En que puedo ayudarte?\n1.Comprar\n2.Vender\n3.Salir", self.mostrar_inventario, isInput=True)}"))
 			if opcion_elegida in opciones:
 				if opciones[opcion_elegida]():
 					return
