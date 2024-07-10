@@ -6,111 +6,151 @@ from data import mensaje_game, mensajes_exterior
 
 
 class Tienda:
-	def __init__(self):
-		self.nombre = "Tienda Pokemon"
-		self.cliente = None
-		self.inventario = []
+    """
+    Representa una tienda Pokémon donde los clientes pueden comprar y vender objetos.
 
-		consulta = "SELECT nombre, precio_compra, precio_venta FROM pokeball UNION SELECT nombre, precio_compra, precio_venta FROM Medicina"
-		cursor.execute(consulta)
-		objetos_para_tienda = cursor.fetchall()
+    Attributes:
+        nombre (str): El nombre de la tienda.
+        cliente (Cliente): El cliente actual en la tienda.
+        inventario (list): La lista de objetos disponibles en la tienda.
 
-		for objeto in objetos_para_tienda:
-			self.inventario.append(objeto)
+    Methods:
+        mostrar_inventario():
+            Muestra el inventario de la tienda.
+        comprar():
+            Permite al cliente comprar objetos de la tienda.
+        verificar_disponibilidad(objeto, cantidad):
+            Verifica si hay suficiente cantidad de un objeto en la mochila del cliente.
+        vender():
+            Permite al cliente vender objetos a la tienda.
+        salir():
+            Muestra un mensaje de despedida y finaliza la interacción.
+        recibir_jugador(cliente):
+            Inicializa la interacción con un nuevo cliente.
+    """
 
+    def __init__(self):
+        """
+        Inicializa una nueva instancia de la tienda Pokémon con un inventario vacío.
+        """
+        self.nombre = "Tienda Pokemon"
+        self.cliente = None
+        self.inventario = []
 
+        consulta = "SELECT nombre, precio_compra, precio_venta FROM pokeball UNION SELECT nombre, precio_compra, precio_venta FROM Medicina"
+        cursor.execute(consulta)
+        objetos_para_tienda = cursor.fetchall()
 
+        list(map(lambda x: self.inventario.append(x), objetos_para_tienda))
 
-	def mostrar_inventario(self):#✔✔✔
-		print("		 🌟 Inventorio Mágico 🌟")
-		print("════════════════════════════════════════════")
-		for i, objeto in enumerate(self.inventario, start=1):
-			print(f"🔮 {i}. {objeto[0]:<20} 💰 {objeto[1]:>5} monedas")
-		print("════════════════════════════════════════════")
-		print("┌────────────────────────┐")
-		print(f"|   Diner: {self.cliente.getDinero()}   ")
-		print("└────────────────────────┘")
+    def mostrar_inventario(self):
+        """
+        Muestra el inventario de la tienda con los nombres y precios de los objetos.
+        """
+        print("         🌟 Inventorio Mágico 🌟")
+        print("════════════════════════════════════════════")
+        for i, objeto in enumerate(self.inventario, start=1):
+            print(f"🔮 {i}. {objeto[0]:<20} 💰 {objeto[1]:>5} monedas")
+        print("════════════════════════════════════════════")
+        print("┌────────────────────────┐")
+        print(f"|   Dinero: {self.cliente.getDinero()}   ")
+        print("└────────────────────────┘")
+        print(self.inventario)
 
+    def comprar(self):
+        """
+        Permite al cliente comprar objetos del inventario de la tienda.
+        """
+        while True:
+            eleccion = int(mensaje_game("¿Qué producto quieres llevarte?", self.mostrar_inventario, isInput=True)) - 1
+            
+            if 0 <= eleccion < len(self.inventario):
+                item_comprado = crearItem(self.inventario[eleccion][0])
+                cantidad = int(mensaje_game(f"{self.inventario[eleccion][0]}?, buena elección\n¿Cuántas quieres llevarte?", self.mostrar_inventario, isInput=True))
+                confirmacion = int(mensaje_game(f"Sería un total de {item_comprado.getPrecioCompra() * cantidad}, ¿estás seguro?\n1.Sí\n2.No", self.mostrar_inventario, isInput=True))
 
+                if confirmacion == 1:
+                    if self.cliente.getDinero() >= item_comprado.getPrecioCompra() * cantidad:
+                        self.cliente.setDinero(self.cliente.getDinero() - item_comprado.getPrecioCompra() * cantidad)
+                        mensaje_game(self.cliente.getMochila().guardar_objeto(item_comprado, cantidad), self.mostrar_inventario)
+                    else:
+                        mensaje_game("No tienes suficiente dinero", self.mostrar_inventario)
+            else:
+                mensaje_game("Escoge un item válido por favor", self.mostrar_inventario)
 
-	def comprar(self):#✔✔✔
-		while True:
-			eleccion = int(input(f"{mensaje_game("Que producto quieres llevarte?", self.mostrar_inventario, isInput=True)}")) - 1
-			
-			if eleccion > 0 or eleccion < len(self.inventario):
-				item_comprado = crearItem(self.inventario[eleccion][0])
+            break
+        return False
 
-				cantidad = int(input(f"{mensaje_game(f"{self.inventario[eleccion][0]}?, buena eleccion\nCuantas quieres llevarte", self.mostrar_inventario, isInput=True)}"))
+    def verificar_disponibilidad(self, objeto, cantidad):
+        """
+        Verifica si hay suficiente cantidad de un objeto en la mochila del cliente.
 
+        Args:
+            objeto (str): El nombre del objeto a verificar.
+            cantidad (int): La cantidad del objeto a verificar.
 
-				confirmacion = int(input(f"{mensaje_game(f"Seria un total de {item_comprado.getPrecioCompra()*cantidad}, estas seguro?\n1.Si\n2.No", self.mostrar_inventario, isInput=True)}"))
+        Returns:
+            bool: True si hay suficiente cantidad, False de lo contrario.
+        """
+        for item, cantidad_disponible in self.cliente.getMochila().bolsilloAbierto:
+            if item == objeto:
+                return cantidad_disponible >= cantidad
+        return False
 
-				if not (confirmacion-1):
-					if self.cliente.getDinero() >= item_comprado.getPrecioCompra()*cantidad:
-						self.cliente.setDinero(self.cliente.getDinero()-item_comprado.getPrecioCompra()*cantidad)
-						mensaje_game(self.cliente.getMochila().guardar_objeto(item_comprado, cantidad), self.mostrar_inventario)
+    def vender(self):
+        """
+        Permite al cliente vender objetos a la tienda.
+        """
+        objeto = self.cliente.getMochila().abrir_mochila()
 
-					else:
-						mensaje_game("No tienes suficiente dinero", self.mostrar_inventario)
+        while True:
+            cantidad = mensaje_game(f"¿Cuántos {objeto.getNombre()} quiere vender?\n(x para salir)", self.mostrar_inventario, isInput=True)
 
-			else:
-				mensaje_game("Escoge una un item valido porfavor", self.mostrar_inventario)
+            if cantidad.lower() == "x":
+                return False
+            
+            if self.verificar_disponibilidad(objeto, int(cantidad)):
+                break
+            else:
+                mensaje_game(f"No tienes suficientes {objeto.getNombre()} para vender", self.mostrar_inventario)
 
-			break
-		return False
+        consultar_precio = f"SELECT nombre, precio_compra, precio_venta FROM pokeball UNION SELECT nombre, precio_compra, precio_venta FROM Medicina WHERE nombre = '{objeto.getNombre()}'"
+        precio = cursor.execute(consultar_precio).fetchall()[0][2]
 
+        oferta = int(precio) * int(cantidad)
+        self.cliente.getMochila().tirar(objeto, int(cantidad))
+        mensaje_game(f"Has vendido {int(cantidad)} {objeto.getNombre()}, toma tu dinero, {oferta}$", self.mostrar_inventario)
+        self.cliente.setDinero(self.cliente.getDinero() + oferta)
+        return False
 
+    def salir(self):
+        """
+        Muestra un mensaje de despedida y finaliza la interacción.
+        """
+        mensaje_game("Hasta la próxima, vuelve pronto", self.mostrar_inventario)
+        return True
 
-	def verificar_disponibilidad(self, objeto, cantidad):
-		for item, cantidad_disponible in self.cliente.getMochila().bolsilloAbierto:
-			if item == objeto:
-				return cantidad_disponible >= cantidad
-		return False
+    def recibir_jugador(self, cliente):
+        """
+        Inicializa la interacción con un nuevo cliente.
 
-	def vender(self):#✔✔✔
-		objeto = self.cliente.getMochila().abrir_mochila()
+        Args:
+            cliente (Cliente): El cliente que entra a la tienda.
+        """
+        self.cliente = cliente
+        mensaje_game(f"Bienvenido a la tienda, {cliente.getNombre()}.\n¡Podrías echar un vistazo a nuestro inventario!", self.mostrar_inventario)
 
-		while True:
-			cantidad = input(f"{mensaje_game(f"cuantos {objeto.getNombre()} quiere vender\nx.Salir", self.mostrar_inventario, isInput=True)}\n== ")
+        opciones = {
+            1: self.comprar,
+            2: self.vender,
+            3: self.salir
+        }
 
-			if cantidad.lower() == "x":
-				return
-			
-			if self.verificar_disponibilidad(self, objeto, int(cantidad)):
-				break
-			else:
-				mensaje_game(f"no tienen sufucientes {objeto.getNombre()} para vender", self.mostrar_inventario)
-
-
-		consultar_precio = f"SELECT nombre, precio_compra, precio_venta FROM pokeball UNION SELECT nombre, precio_compra, precio_venta FROM Medicina WHERE nombre = '{objeto.getNombre()}'"
-		precio = cursor.execute(consultar_precio).fetchall()[0][2]
-		oferta = int(precio)*int(cantidad)
-		self.cliente.getMochila().tirar(objeto, int(cantidad))
-		mensaje_game(f"has vendido {int(cantidad)} {objeto.getNombre()}, toma tu dinero, {oferta}$", self.mostrar_inventario)
-		self.cliente.setDinero(self.cliente.getDinero() + oferta)
-		return False
-
-
-
-	def salir(self):#✔✔✔
-		mensaje_game("Hasta la proxima, vuelve pronto", self.mostrar_inventario)
-		return True
-
-
-
-	def recibir_jugador(self, cliente):#✔✔✔
-		self.cliente = cliente
-		mensaje_game(f"Bienvenido a la tienda {cliente.getNombre()}.\n¡Podrias Echar un vistazo a nuestro inventario!", self.mostrar_inventario)
-		while True:
-			opciones = {
-				1:self.comprar,
-				2:self.vender,
-				3:self.salir
-			}
-			opcion_elegida = int(input(f"{mensaje_game("¿En que puedo ayudarte?\n1.Comprar\n2.Vender\n3.Salir", self.mostrar_inventario, isInput=True)}"))
-			if opcion_elegida in opciones:
-				if opciones[opcion_elegida]():
-					return
-				
-
-	
+        while True:
+            try:
+                opcion_elegida = int(mensaje_game("¿En qué puedo ayudarte?\n1. Comprar\n2. Vender\n3. Salir", self.mostrar_inventario, isInput=True))
+                if opcion_elegida in opciones and opciones[opcion_elegida]():
+                    return
+            except ValueError:
+                pass
+            mensaje_game("Entrada no válida. Por favor, elige una opción válida (1, 2 o 3).", self.mostrar_inventario)

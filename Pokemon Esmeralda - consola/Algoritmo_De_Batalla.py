@@ -3,6 +3,7 @@ from Entrenador import *
 import math
 import os
 import time
+from data import mensaje_game, mensajes_exterior
 #OPCION 3
 
 """
@@ -79,17 +80,6 @@ class AlgoritmoDeBatalla:
             f"\n                                       {self.barra_de_pokeballs()}\n"
         )
 
-    def mensaje_game(self, mensaje):
-        self.imprimir_escenario_de_batalla()
-        print(f"{mensaje}")
-        input(">>")
-        #time.sleep(2)
-
-    def mensajes_exterior(self, mensajes):
-        for mensaje in mensajes:
-            self.mensaje_game(mensaje)
-            #time.sleep(2)
-
 
 
 
@@ -152,13 +142,12 @@ class AlgoritmoDeBatalla:
         MAX_ATTACK_INDEX = 4
 
         while True:
-            self.imprimir_escenario_de_batalla()
-            print(f"⚔⚔¿que ataque deberia usar {self.QUESI.getNombre()}⚔⚔:")
-            self.QUESI.mostrarAtaques()
+            mensaje_game(f"⚔⚔¿que ataque deberia usar {self.QUESI.getNombre()}⚔⚔:\n {self.QUESI.mostrarAtaques()}", funcion=self.imprimir_escenario_de_batalla)
+            
             try:
-                seleccion_ataque = int(input(f"\n{BACK_OPTION}. Atras\n⚜== ")) - 1
+                seleccion_ataque = int(mensaje_game(f"\n{BACK_OPTION}. Atras\n⚜== ", funcion=self.imprimir_escenario_de_batalla, isInput=True)) - 1
             except:
-                self.mensaje_game("❌❌❌Escoge una Opcion valida porfavor❌❌❌")
+                mensaje_game("❌❌❌Escoge una Opcion valida porfavor❌❌❌", funcion=self.imprimir_escenario_de_batalla)
                 continue
 
 
@@ -168,9 +157,9 @@ class AlgoritmoDeBatalla:
             selected_attack = self.QUESI.getMovimiento(seleccion_ataque)
 
             if selected_attack.getNombre() == "":
-                self.mensaje_game("❌❌❌Escoge una Opcion valida porfavor❌❌❌")
+                mensaje_game("❌❌❌Escoge una Opcion valida porfavor❌❌❌", funcion=self.imprimir_escenario_de_batalla)
             elif selected_attack.getPP() == 0:
-                self.mensaje_game(f"{selected_attack.getNombre()} no se puede realizar ya que su pp es 0")
+                mensaje_game(f"{selected_attack.getNombre()} no se puede realizar ya que su pp es 0", funcion=self.imprimir_escenario_de_batalla)
             else:
                 return seleccion_ataque
 
@@ -183,9 +172,9 @@ class AlgoritmoDeBatalla:
         DEBILITADO = "Debilitado😷"
 
         while True:
-            self.mensaje_game(f"Escoge el pokemon que deseas que salga a luchar\n")
+            mensaje_game(f"Escoge el pokemon que deseas que salga a luchar\n", funcion=self.imprimir_escenario_de_batalla)
             self.PLAYER.imprimir_pokemons()
-            seleccion_cambio = int(input(f"Pulsa {EXIT_OPTION} para salir.\n⚜== ")) - 1
+            seleccion_cambio = int(mensaje_game(f"Pulsa {EXIT_OPTION} para salir.\n⚜== ", funcion=self.imprimir_escenario_de_batalla, isInput=True)) - 1
 
             if seleccion_cambio + 1 == EXIT_OPTION:
                 return None
@@ -193,15 +182,15 @@ class AlgoritmoDeBatalla:
             try:
                 selected_pokemon = self.PLAYER.equipo_Pokemon[seleccion_cambio]
             except IndexError:
-                self.mensaje_game("❌❌❌Escoge un pokemon valido porfavor❌❌❌")
+                mensaje_game("❌❌❌Escoge un pokemon valido porfavor❌❌❌", funcion=self.imprimir_escenario_de_batalla)
                 continue
 
             if selected_pokemon.getEspecie() == INVALID_POKEMON:
-                self.mensaje_game("❌❌❌Escoge un pokemon valido porfavor❌❌❌")
+                mensaje_game("❌❌❌Escoge un pokemon valido porfavor❌❌❌", funcion=self.imprimir_escenario_de_batalla)
             elif selected_pokemon.getEstado().getNombre() == DEBILITADO:
-                self.mensaje_game(f"❌❌{selected_pokemon.getNombre()} no ha podido entrar a la batalla debido a que está Debilitado❌❌")
+                mensaje_game(f"❌❌{selected_pokemon.getNombre()} no ha podido entrar a la batalla debido a que está Debilitado❌❌", funcion=self.imprimir_escenario_de_batalla)
             elif seleccion_cambio == MIN_POKEMON_INDEX:
-                self.mensaje_game(f"❌{selected_pokemon.getNombre()} ya está luchando, selecciona otro pokemon❌")
+                mensaje_game(f"❌{selected_pokemon.getNombre()} ya está luchando, selecciona otro pokemon❌", funcion=self.imprimir_escenario_de_batalla)
             else:
                 return seleccion_cambio
     
@@ -210,7 +199,7 @@ class AlgoritmoDeBatalla:
 
     def switch_pokemon(self, seleccion_cambio):
         MIN_POKEMON_INDEX = 0
-        self.mensaje_game(f"🔀🔀🔀{self.PLAYER.equipo_Pokemon[MIN_POKEMON_INDEX].getNombre()} ha sido cambio_de_pokemoniado por {self.PLAYER.equipo_Pokemon[seleccion_cambio].getNombre()}🔀🔀🔀")
+        mensaje_game(f"🔀🔀🔀{self.PLAYER.equipo_Pokemon[MIN_POKEMON_INDEX].getNombre()} ha sido cambio_de_pokemoniado por {self.PLAYER.equipo_Pokemon[seleccion_cambio].getNombre()}🔀🔀🔀", funcion=self.imprimir_escenario_de_batalla)
         self.PokemonesQueLucharon.append(self.PLAYER.equipo_Pokemon[seleccion_cambio])
         self.PLAYER.equipo_Pokemon[seleccion_cambio], self.PLAYER.equipo_Pokemon[MIN_POKEMON_INDEX] = self.PLAYER.equipo_Pokemon[MIN_POKEMON_INDEX], self.PLAYER.equipo_Pokemon[seleccion_cambio]
         self.QUESI = self.PLAYER.equipo_Pokemon[MIN_POKEMON_INDEX]
@@ -229,10 +218,10 @@ class AlgoritmoDeBatalla:
         numero = random.randint(0, RANDOM_RANGE)
 
         if numero < calculo:
-            self.mensaje_game("🌪️🌪️🌪️ el pokemon escapa del combate 🌪️🌪️🌪️")
+            mensaje_game("🌪️🌪️🌪️ el pokemon escapa del combate 🌪️🌪️🌪️", funcion=self.imprimir_escenario_de_batalla)
             return True
         else:
-            self.mensaje_game("no has podido escapar del combateeee")
+            mensaje_game("no has podido escapar del combateeee", funcion=self.imprimir_escenario_de_batalla)
             return False
 
 
@@ -254,14 +243,14 @@ class AlgoritmoDeBatalla:
                 pass #el pokemon hizo algo diferentae a atacar en el turno
             else:
                 puede_moverse, mensajes = atacante.getEstado().ver_si_se_puede_mover(atacante)
-                self.mensajes_exterior(mensajes)
+                mensajes_exterior(mensajes)
                 if puede_moverse:
                     pass
                 else:
-                    self.mensaje_game("🧶🧶🧶Es el momento de atacar de " + atacante.getNombre() + " 🧶🧶🧶")
-                    self.mensaje_game(f"🥊🥊🥊{atacante.getNombre()} ah usado el movimiento {atacante.getMovimiento(datosParaAtacar[atacante][1]).getNombre()}🥊🥊🥊")
-                    self.mensajes_exterior(atacante.Atacar(datosParaAtacar[atacante][2], datosParaAtacar[atacante][1]))
-                    self.mensaje_game(f"💔💔💔los ps de {datosParaAtacar[atacante][2].getNombre()} quedan en {datosParaAtacar[atacante][2].getPs()}💔💔💔")
+                    mensaje_game("🧶🧶🧶Es el momento de atacar de " + atacante.getNombre() + " 🧶🧶🧶", funcion=self.imprimir_escenario_de_batalla)
+                    mensaje_game(f"🥊🥊🥊{atacante.getNombre()} ah usado el movimiento {atacante.getMovimiento(datosParaAtacar[atacante][1]).getNombre()}🥊🥊🥊", funcion=self.imprimir_escenario_de_batalla)
+                    mensajes_exterior(atacante.Atacar(datosParaAtacar[atacante][2], datosParaAtacar[atacante][1]))
+                    mensaje_game(f"💔💔💔los ps de {datosParaAtacar[atacante][2].getNombre()} quedan en {datosParaAtacar[atacante][2].getPs()}💔💔💔", funcion=self.imprimir_escenario_de_batalla)
 
 
 
@@ -281,9 +270,7 @@ class AlgoritmoDeBatalla:
 
 
             while cami:
-                self.imprimir_escenario_de_batalla()
-                self.mensaje_game(f"❓❓Que Deberia Hacer {self.QUESI.getNombre()}❓❓:⚔1.Lucha⚔     🎒2.Mochila🎒 \n{' '*35}🧮3.Pokemon🧮   🍃4.Huida🍃")
-                mainSeleccion = int(input("⚜== "))
+                mainSeleccion = int(mensaje_game(f"❓❓Que Deberia Hacer {self.QUESI.getNombre()}❓❓:⚔1.Lucha⚔     🎒2.Mochila🎒 \n{' '*35}🧮3.Pokemon🧮   🍃4.Huida🍃", funcion=self.imprimir_escenario_de_batalla, isInput=True))
 
                 if mainSeleccion == 1: #✔✔✔
                     while True:
@@ -302,30 +289,35 @@ class AlgoritmoDeBatalla:
                         objeto_sacado = self.PLAYER.getMochila().abrir_mochila()
                         #no saco ningun objeto
                         if not objeto_sacado:
-                            print("(se cierra la mochila)")
+                            mensaje_game("(se cierra la mochila)", funcion=self.imprimir_escenario_de_batalla)
                             break
 
-                        eleccion_uso = int(input("1.usar       2.salir\n=="))
+                        eleccion_uso = int(mensaje_game("1.usar       2.salir\n==", funcion=self.imprimir_escenario_de_batalla, isInput=True))
                         if eleccion_uso == 1:
                             if objeto_sacado.getTipo() != "pokéball":
                                 while True:
                                     self.PLAYER.imprimir_pokemons()
-                                    objetivo = int(input(f"///Ah que pokemon le quieres dar la medicina\n== "))-1
+                                    objetivo = int(mensaje_game(f"///Ah que pokemon le quieres dar la medicina\n== ", funcion=self.imprimir_escenario_de_batalla, isInput=True))-1
                                     if (self.PLAYER.equipo_Pokemon[objetivo].getPs() == 0 or
                                         self.PLAYER.equipo_Pokemon[objetivo].getEspecie() == "NINE" or
                                         objetivo < 0 or objetivo > 5):
-                                        print("❌❌❌ POR FAVOR ELIGE UNA OPCIÓN VÁLIDA, POR FAVOR ❌❌❌\n")
+                                        mensaje_game("❌❌❌ POR FAVOR ELIGE UNA OPCIÓN VÁLIDA, POR FAVOR ❌❌❌\n", funcion=self.imprimir_escenario_de_batalla)
                                     else:
                                         break
+
+
                                 
-                                objeto_sacado.sanarPokemon(self.PLAYER.equipo_Pokemon[objetivo])
-                                print(f"🍂🍂🍂 SE AH USADO EL OBJETOOOO 🍂🍂🍂")
-                                cami = False
-                                break
+                                
+                                if objeto_sacado.sanarPokemon(self.PLAYER.equipo_Pokemon[objetivo]):
+                                    mensaje_game(f"🍂🍂🍂 SE AH USADO EL OBJETOOOO 🍂🍂🍂", funcion=self.imprimir_escenario_de_batalla)
+                                    cami = False
+                                    break
+                                else:
+                                    pass
                                 
                             else:
                                 if self.validacion == "OFICIAL":
-                                    self.mensaje_game("no puedes escapar de un combate contra un entrenador")
+                                    mensaje_game("no puedes escapar de un combate contra un entrenador", funcion=self.imprimir_escenario_de_batalla)
                                     break
 
                                 if (self.realizar_captura_pokemon(objeto_sacado)):
@@ -349,7 +341,7 @@ class AlgoritmoDeBatalla:
 
                 elif mainSeleccion == 4: #✔✔✔
                     if self.validacion == "OFICIAL":
-                        self.mensaje_game("no puedes escapar de un combate contra un entrenador")
+                        mensaje_game("no puedes escapar de un combate contra un entrenador", funcion=self.imprimir_escenario_de_batalla)
                     else:
                         if self.attempt_escape():
                             return
@@ -359,13 +351,13 @@ class AlgoritmoDeBatalla:
 
 
                 else:
-                    self.mensaje_game("❌❌❌ POR FAVOR ELIGE UNA OPCIÓN VÁLIDA, POR FAVOR ❌❌❌\n")
+                    mensaje_game("❌❌❌ POR FAVOR ELIGE UNA OPCIÓN VÁLIDA, POR FAVOR ❌❌❌\n", funcion=self.imprimir_escenario_de_batalla)
 
 
             self.relizar_ataques(ataqueDeQuesito,1)
 
-            self.mensajes_exterior(self.QUESI.getEstado().realizarDaño(self.QUESI, self.KAIDO))
-            self.mensajes_exterior(self.KAIDO.getEstado().realizarDaño(self.KAIDO, self.QUESI))
+            mensajes_exterior(self.QUESI.getEstado().realizarDaño(self.QUESI, self.KAIDO))
+            mensajes_exterior(self.KAIDO.getEstado().realizarDaño(self.KAIDO, self.QUESI))
             print("❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃\n\n\n\n\n\n")
 
 
@@ -382,7 +374,7 @@ class AlgoritmoDeBatalla:
             print(f"{self.PLAYER.equipo_Pokemon[0].getNombre()} Se ha debilitado.")
 
             while True:
-                cambio_de_pokemon = int(input(f"{self.PLAYER.imprimir_pokemons()}\n///Por qué Pokémon quieres cambio_de_pokemoniar a {self.PLAYER.equipo_Pokemon[0].getNombre()} para continuar la batalla: "))-1
+                cambio_de_pokemon = int(mensaje_game(f"{self.PLAYER.imprimir_pokemons()}\n///Por qué Pokémon quieres cambio_de_pokemoniar a {self.PLAYER.equipo_Pokemon[0].getNombre()} para continuar la batalla: ", funcion=self.imprimir_escenario_de_batalla, isInput=True))-1
                 if (self.PLAYER.equipo_Pokemon[cambio_de_pokemon].getPs() == 0 or
                     self.PLAYER.equipo_Pokemon[cambio_de_pokemon].getEspecie() == "NINE" or
                     cambio_de_pokemon < 0 or cambio_de_pokemon > 5):
@@ -474,8 +466,8 @@ class AlgoritmoDeBatalla:
     def LUCHA_CONTRA_POKEMON(self, JUGADOR, pokemonAEnfrentar):
         self.PLAYER, self.validacion, self.KAIDO, self.QUESI = JUGADOR, "SALVAJE", pokemonAEnfrentar, JUGADOR.equipo_Pokemon[0]
         self.PokemonesQueLucharon.append(self.QUESI)
-        self.mensaje_game(f"🌳🌳🌳El pokemon {pokemonAEnfrentar.getNombre()} ah salido de un arbusto🌳🌳🌳")
-        self.mensaje_game(f"{pokemonAEnfrentar.getNombre()} está listo para luchar, tu combate contra el pokemon salvaje comienza")
+        mensaje_game(f"🌳🌳🌳El pokemon {pokemonAEnfrentar.getNombre()} ah salido de un arbusto🌳🌳🌳", funcion=self.imprimir_escenario_de_batalla)
+        mensaje_game(f"{pokemonAEnfrentar.getNombre()} está listo para luchar, tu combate contra el pokemon salvaje comienza", funcion=self.imprimir_escenario_de_batalla)
         while True: #self.el_entrenador_puede_seguir(self.PLAYER) and pokemonAEnfrentar.getPs() != 0:
             self.ALGORITMO_DE_LA_BATALLA(pokemonAEnfrentar)
 

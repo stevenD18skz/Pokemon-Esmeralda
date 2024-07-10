@@ -36,7 +36,7 @@ COSAS POR HACER
 
 steven = Entrenadores("Steven", 100000, 15, "entrenador pokemon", Mochila(), crear_pokemon_entrenador("Bulbasaur"), crear_pokemon_entrenador("Ivysaur"), crear_pokemon_entrenador("Bulbasaur"), crear_pokemon_entrenador("Fennekin"), crear_pokemon_entrenador("Sobble"), crear_pokemon_entrenador("Oshawott"))
 while True:
-	eleccion = input(f"{mensaje_game(f"1.ir al bosque\n2.luchar contra algun entrenador\n3.ir a la tineda\nE.Menu\nX.salir del juego", isInput=True)}")
+	eleccion = mensaje_game(f"1.ir al bosque\n2.luchar contra algun entrenador\n3.ir a la tineda\nE.Menu\nX.salir del juego", isInput=True)
 
 
 	if eleccion == "1":
@@ -56,7 +56,7 @@ while True:
 
 	elif eleccion.upper() == "E":
 		while True:
-			eleccion_menu = input(f"{mensaje_game(f"1.POKEDEX\n2.POKEMONS\n3.MOCHILA\n4.{steven.getNombre()}\n5.GUARDAR\n6.OPCIONES\n7.SALIR", isInput=True)}")
+			eleccion_menu = mensaje_game(f"1.POKEDEX\n2.POKEMONS\n3.MOCHILA\n4.{steven.getNombre()}\n5.GUARDAR\n6.OPCIONES\n7.SALIR", isInput=True)
 			if eleccion_menu == "1":
 				print("aun no disponible")
 			if eleccion_menu == "2":

@@ -34,15 +34,13 @@ class Medicina:#✔✔✔
     def curarPsPokemon(self, pokeASanar):#✔✔✔
         if pokeASanar.getPs() == pokeASanar.getMps():#si el pokemon tiene los ps al maximo
             print("❌❌❌", self.nombre, "no tendra ningun efecto en", pokeASanar.getNombre(), "❌❌❌")
-
-        elif pokeASanar.getPs() + self.curar > pokeASanar.getMps() or self.curar == 100:#para sanar los ps del pokemon al maximo
-            restored_ps = pokeASanar.getMps() - pokeASanar.getPs()
-            print("💊💊💊los ps de", pokeASanar.getNombre(), "han sido restaurados", restored_ps, "puntos, su vida queda en", pokeASanar.getMps(), "💊💊💊")
-            pokeASanar.setPs(pokeASanar.getMps())
+            return False
 
         else:#para sanar al pokemon solo lo que cura la pocion
-            pokeASanar.setPs(pokeASanar.getPs() + self.curar)
-            print("💊💊💊los ps de", pokeASanar.getNombre(), "hah sido restaurados", self.curar, "puntos, su vida queda en", pokeASanar.getPs(), "💊💊💊")
+            vida_al_llegar = pokeASanar.getPs()
+            pokeASanar.setPs(min(pokeASanar.getPs() + self.curar, pokeASanar.getMps()))
+            print(f"💊💊💊los ps de {pokeASanar.getNombre()} han sido restaurados {pokeASanar.getPs() - vida_al_llegar} puntos, su vida queda en {pokeASanar.getPs()}💊💊💊")
+            return True
 
 
 
@@ -55,19 +53,23 @@ class Medicina:#✔✔✔
             cursor.execute(consulta_estado)
             estado_consultado = cursor.fetchall()[0][1:]
             pokeASanar.setEstado(Estado(*estado_consultado))
+            return True
 
         else:
             print("❌❌❌", self.nombre, "no tendra ningun efecto en", pokeASanar.getNombre(), "❌❌❌")
+            return False
 
 
 
 
     def sanarPokemon(self, pokeSanado):#✔✔✔
         if self.tipo == "Pocion":
-            self.curarPsPokemon(pokeSanado)
+            a1 = self.curarPsPokemon(pokeSanado)
 
         if self.tipo == "Restaurador de estado":
-            self.curarEstados(pokeSanado) 
+            a2 = self.curarEstados(pokeSanado) 
+        
+        return a1 or a2
 
 
 
