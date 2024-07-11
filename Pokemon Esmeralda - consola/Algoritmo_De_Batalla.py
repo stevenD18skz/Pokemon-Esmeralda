@@ -142,10 +142,8 @@ class AlgoritmoDeBatalla:
         MAX_ATTACK_INDEX = 4
 
         while True:
-            mensaje_game(f"⚔⚔¿que ataque deberia usar {self.QUESI.getNombre()}⚔⚔:\n {self.QUESI.mostrarAtaques()}", funcion=self.imprimir_escenario_de_batalla)
-            
             try:
-                seleccion_ataque = int(mensaje_game(f"\n{BACK_OPTION}. Atras\n⚜== ", funcion=self.imprimir_escenario_de_batalla, isInput=True)) - 1
+                seleccion_ataque = int(mensaje_game(f"⚔⚔¿que ataque deberia usar {self.QUESI.getNombre()}⚔⚔:\n {self.QUESI.mostrarAtaques3()}\n{BACK_OPTION}. Atras", funcion=self.imprimir_escenario_de_batalla, isInput=True)) - 1
             except:
                 mensaje_game("❌❌❌Escoge una Opcion valida porfavor❌❌❌", funcion=self.imprimir_escenario_de_batalla)
                 continue
@@ -243,13 +241,13 @@ class AlgoritmoDeBatalla:
                 pass #el pokemon hizo algo diferentae a atacar en el turno
             else:
                 puede_moverse, mensajes = atacante.getEstado().ver_si_se_puede_mover(atacante)
-                mensajes_exterior(mensajes)
+                mensajes_exterior(mensajes, self.imprimir_escenario_de_batalla)
                 if puede_moverse:
                     pass
                 else:
                     mensaje_game("🧶🧶🧶Es el momento de atacar de " + atacante.getNombre() + " 🧶🧶🧶", funcion=self.imprimir_escenario_de_batalla)
                     mensaje_game(f"🥊🥊🥊{atacante.getNombre()} ah usado el movimiento {atacante.getMovimiento(datosParaAtacar[atacante][1]).getNombre()}🥊🥊🥊", funcion=self.imprimir_escenario_de_batalla)
-                    mensajes_exterior(atacante.Atacar(datosParaAtacar[atacante][2], datosParaAtacar[atacante][1]))
+                    mensajes_exterior(atacante.Atacar(datosParaAtacar[atacante][2], datosParaAtacar[atacante][1]), self.imprimir_escenario_de_batalla)
                     mensaje_game(f"💔💔💔los ps de {datosParaAtacar[atacante][2].getNombre()} quedan en {datosParaAtacar[atacante][2].getPs()}💔💔💔", funcion=self.imprimir_escenario_de_batalla)
 
 
@@ -356,8 +354,8 @@ class AlgoritmoDeBatalla:
 
             self.relizar_ataques(ataqueDeQuesito,1)
 
-            mensajes_exterior(self.QUESI.getEstado().realizarDaño(self.QUESI, self.KAIDO))
-            mensajes_exterior(self.KAIDO.getEstado().realizarDaño(self.KAIDO, self.QUESI))
+            mensajes_exterior(self.QUESI.getEstado().realizarDaño(self.QUESI, self.KAIDO), self.imprimir_escenario_de_batalla)
+            mensajes_exterior(self.KAIDO.getEstado().realizarDaño(self.KAIDO, self.QUESI), self.imprimir_escenario_de_batalla)
             print("❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃\n\n\n\n\n\n")
 
 

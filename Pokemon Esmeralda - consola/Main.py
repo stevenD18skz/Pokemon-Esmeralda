@@ -34,7 +34,15 @@ COSAS POR HACER
 """
 
 
-steven = Entrenadores("Steven", 100000, 15, "entrenador pokemon", Mochila(), crear_pokemon_entrenador("Bulbasaur"), crear_pokemon_entrenador("Ivysaur"), crear_pokemon_entrenador("Bulbasaur"), crear_pokemon_entrenador("Fennekin"), crear_pokemon_entrenador("Sobble"), crear_pokemon_entrenador("Oshawott"))
+steven = Entrenadores("Steven", 100000, 15, "entrenador pokemon", Mochila(), crear_pokemon_entrenador("Sobble"), crear_pokemon_entrenador("Ivysaur"), crear_pokemon_entrenador("Bulbasaur"), crear_pokemon_entrenador("Fennekin"), crear_pokemon_entrenador("Sobble"), crear_pokemon_entrenador("Oshawott"))
+
+
+#steven.equipo_Pokemon[0].mostrarAtaques()
+##print(steven.equipo_Pokemon[0].mostrarAtaques2())
+#print(steven.equipo_Pokemon[0].mostrarAtaques3())
+#
+
+
 while True:
 	eleccion = mensaje_game(f"1.ir al bosque\n2.luchar contra algun entrenador\n3.ir a la tineda\nE.Menu\nX.salir del juego", isInput=True)
 

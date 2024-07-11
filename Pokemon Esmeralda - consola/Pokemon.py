@@ -137,6 +137,42 @@ class Pokemon:
 
 
 
+    def mostrarAtaques2(self):
+        # Initialize an empty string to store the output
+        output_string = ""
+
+        # Add the top border
+        output_string += f"◤{"─"*90}◥\n"
+
+        # Loop through the first two slots and format the information
+        for i in range(2):
+            slot = self.slotsDeMovimientos[i]
+            output_string += f"│ {i+1}. {slot.getNombre()} pp: {slot.getPP()} / {slot.getMPP()}  \t\t\t  {i+3}. {self.slotsDeMovimientos[i+2].getNombre()} pp: {self.slotsDeMovimientos[i+2].getPP()} / {self.slotsDeMovimientos[i+2].getMPP()}\n"
+            output_string += f"│   Tipo: {slot.getTipo()}  \t\t\t\t\t  Tipo: {self.slotsDeMovimientos[i+2].getTipo()}\n"
+
+        # Add the bottom border
+        output_string += f"◣{"─"*90}◢"
+
+        # Return the formatted string
+        return output_string
+
+
+
+
+    def mostrarAtaques3(self):
+        ataques = []
+        ataques.append(f"◤{'─'*90}◥")
+        ataques.append(f"│ 1. {self.slotsDeMovimientos[0].getNombre()} pp: {self.slotsDeMovimientos[0].getPP()}/{self.slotsDeMovimientos[0].getMPP()}                        2. {self.slotsDeMovimientos[1].getNombre()} pp: {self.slotsDeMovimientos[1].getPP()}/{self.slotsDeMovimientos[1].getMPP()}")
+        ataques.append(f"│    Tipo: {self.slotsDeMovimientos[0].getTipo()}                                   Tipo: {self.slotsDeMovimientos[1].getTipo()}")
+        ataques.append(f"│")
+        ataques.append(f"│ 3. {self.slotsDeMovimientos[2].getNombre()} pp: {self.slotsDeMovimientos[2].getPP()}/{self.slotsDeMovimientos[2].getMPP()}                        4. {self.slotsDeMovimientos[3].getNombre()} pp: {self.slotsDeMovimientos[3].getPP()}/{self.slotsDeMovimientos[3].getMPP()}")
+        ataques.append(f"│    Tipo: {self.slotsDeMovimientos[2].getTipo()}                                  Tipo: {self.slotsDeMovimientos[3].getTipo()}")
+        ataques.append(f"◣{'─'*90}◢")
+        
+        return "\n".join(ataques)
+
+
+
 
     def Establecer_IV(self):#✔✔✔
         self.IVs = [random.randint(1, 32) for _ in range(6)]
