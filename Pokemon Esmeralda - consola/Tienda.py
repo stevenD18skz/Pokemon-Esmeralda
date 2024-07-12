@@ -59,7 +59,7 @@ class Tienda:
 				"""
 				Devuelve una cadena con el inventario de la tienda con los nombres y precios de los objetos.
 				"""
-				inventario_str = "                    🌟 Inventorio Mágico 🌟\n"
+				inventario_str = "           🌟 Inventorio Mágico 🌟\n"
 				inventario_str += "════════════════════════════════════════════\n"
 				for i, objeto in enumerate(self.inventario, start=1):
 						inventario_str += f"🔮 {i}. {objeto[0]:<20} 💰 {objeto[1]:>5} monedas\n"
@@ -84,15 +84,16 @@ class Tienda:
 						return
 				item_comprado = crearItem(self.inventario[int(eleccion) -1][0])
 				cantidad = mensaje_game(mensaje=f"{item_comprado.getNombre()}?, buena elección\n¿Cuántas quieres llevarte?", display=self.mostrar_inventario(),is_input=True,only_numbers=True,validacion=lambda x: int(x) > 0,mensaje_raise="Ingresa una cantidad no negativa",)
-				confirmacion = mensaje_game(mensaje=f"Sería un total de {item_comprado.getPrecioCompra() * cantidad}, ¿estás seguro?\n1.Sí\n2.No", display=self.mostrar_inventario(), is_input=True,only_numbers=True)
+				confirmacion = mensaje_game(mensaje=f"Sería un total de {item_comprado.getPrecioCompra() * cantidad}, ¿estás seguro?\n1.Sí\nX.No", display=self.mostrar_inventario(), is_input=True,only_numbers=True, back_option="x")
 				if confirmacion is None:
-					mensaje_game("Compra cancelada.", self.mostrar_inventario)
+					mensaje_game("Compra cancelada.", self.mostrar_inventario())
 					return
 				if self.cliente.getDinero() >= item_comprado.getPrecioCompra() * cantidad:
 						self.cliente.setDinero(self.cliente.getDinero() - item_comprado.getPrecioCompra() * cantidad)
-						mensaje_game(self.cliente.getMochila().guardar_objeto(item_comprado, cantidad), self.mostrar_inventario)
+						mensaje_game(self.cliente.getMochila().guardar_objeto(item_comprado, cantidad), self.mostrar_inventario())
+						eleccion, cantidad, confirmacion = None, None, None
 				else:
-						mensaje_game("No tienes suficiente dinero", self.mostrar_inventario)
+						mensaje_game("No tienes suficiente dinero", self.mostrar_inventario())
 
 
 
@@ -119,7 +120,7 @@ class Tienda:
 				Permite al cliente vender objetos a la tienda.
 				"""
 				objeto = self.cliente.getMochila().abrir_mochila()
-				cantidad = mensaje_game(f"¿Cuántos {objeto.getNombre()} quiere vender?\n(x para salir)", display=self.mostrar_inventario(), is_input=True, validacion=self.verificar_disponibilidad,mensaje_raise=f"No tienes suficientes {objeto.getNombre()} para vender",only_numbers=True,back_option="x"
+				cantidad = mensaje_game(f"¿Cuántos {objeto.getNombre()} quiere vender?\n(x para salir)", display=self.mostrar_inventario(), is_input=True, validacion=lambda x: self.verificar_disponibilidad(*[objeto, int(x)]),mensaje_raise=f"No tienes suficientes {objeto.getNombre()} para vender",only_numbers=True,back_option="x"
 				)
 				if cantidad is None:
 						return False
@@ -142,7 +143,7 @@ class Tienda:
 				"""
 				Muestra un mensaje de despedida y finaliza la interacción.
 				"""
-				mensaje_game("Hasta la próxima, vuelve pronto", self.mostrar_inventario)
+				mensaje_game("Hasta la próxima, vuelve pronto", self.mostrar_inventario())
 				return True
 
 
@@ -191,9 +192,9 @@ class Tienda:
 								if self.verificar_disponibilidad(objeto, cantidad):
 										break
 								else:
-										mensaje_game(f"No tienes suficientes {objeto.getNombre()} para vender", self.mostrar_inventario)
+										mensaje_game(f"No tienes suficientes {objeto.getNombre()} para vender", self.mostrar_inventario())
 						except ValueError:
-								mensaje_game("Entrada no válida. Por favor, introduce un número.", self.mostrar_inventario)
+								mensaje_game("Entrada no válida. Por favor, introduce un número.", self.mostrar_inventario())
 
 		def comprar(self):
 				Permite al cliente comprar objetos del inventario de la tienda.
@@ -211,16 +212,16 @@ class Tienda:
 										if confirmacion == 1:
 												if self.cliente.getDinero() >= item_comprado.getPrecioCompra() * cantidad:
 														self.cliente.setDinero(self.cliente.getDinero() - item_comprado.getPrecioCompra() * cantidad)
-														mensaje_game(self.cliente.getMochila().guardar_objeto(item_comprado, cantidad), self.mostrar_inventario)
+														mensaje_game(self.cliente.getMochila().guardar_objeto(item_comprado, cantidad), self.mostrar_inventario())
 												else:
-														mensaje_game("No tienes suficiente dinero", self.mostrar_inventario)
+														mensaje_game("No tienes suficiente dinero", self.mostrar_inventario())
 										else:
-												mensaje_game("Compra cancelada.", self.mostrar_inventario)
+												mensaje_game("Compra cancelada.", self.mostrar_inventario())
 								else:
-										mensaje_game("Escoge un item válido por favor", self.mostrar_inventario)
+										mensaje_game("Escoge un item válido por favor", self.mostrar_inventario())
 								break
 						except ValueError:
-								mensaje_game("Entrada no válida. Por favor, introduce un número.", self.mostrar_inventario)
+								mensaje_game("Entrada no válida. Por favor, introduce un número.", self.mostrar_inventario())
 				return False
 
 
