@@ -59,7 +59,7 @@ class Tienda:
 				"""
 				Devuelve una cadena con el inventario de la tienda con los nombres y precios de los objetos.
 				"""
-				inventario_str = "           🌟 Inventorio Mágico 🌟\n"
+				inventario_str = "					 🌟 Inventorio Mágico 🌟\n"
 				inventario_str += "════════════════════════════════════════════\n"
 				for i, objeto in enumerate(self.inventario, start=1):
 						inventario_str += f"🔮 {i}. {objeto[0]:<20} 💰 {objeto[1]:>5} monedas\n"
@@ -71,29 +71,141 @@ class Tienda:
 
 
 
-		def comprar(self):
+		def comprarXXX(self):
 			"""
 			Permite al cliente comprar objetos del inventario de la tienda.
 			"""
 			eleccion, cantidad, confirmacion = None, None, None
 			while True:
 				if not eleccion:
-					eleccion = mensaje_game(mensaje=f"¿Qué producto quieres llevarte?\n(x para salir)", display=self.mostrar_inventario(),is_input=True,only_numbers=True, back_option="x", validacion=lambda x: 0 <= int(x) < len(self.inventario),mensaje_raise="Escoge un item válido por favor",)
+					eleccion = mensaje_game(
+							mensaje=f"¿Qué producto quieres llevarte?\n(x para salir)",
+							display=self.mostrar_inventario(),
+							is_input=True,
+							only_numbers=True,
+							back_option="x",
+							validacion=lambda x: 0 <= int(x) < len(self.inventario),
+							mensaje_raise="Escoge un item válido por favor",
+					)
 
 					if eleccion is None:
 						return
+					
+
 				item_comprado = crearItem(self.inventario[int(eleccion) -1][0])
-				cantidad = mensaje_game(mensaje=f"{item_comprado.getNombre()}?, buena elección\n¿Cuántas quieres llevarte?", display=self.mostrar_inventario(),is_input=True,only_numbers=True,validacion=lambda x: int(x) > 0,mensaje_raise="Ingresa una cantidad no negativa",)
-				confirmacion = mensaje_game(mensaje=f"Sería un total de {item_comprado.getPrecioCompra() * cantidad}, ¿estás seguro?\n1.Sí\nX.No", display=self.mostrar_inventario(), is_input=True,only_numbers=True, back_option="x")
+
+				cantidad = mensaje_game(
+						mensaje=f"{item_comprado.getNombre()}?,
+						buena elección\n¿Cuántas quieres llevarte?",
+						display=self.mostrar_inventario(),
+						is_input=True,
+						only_numbers=True,
+						validacion=lambda x: int(x) > 0,
+						mensaje_raise="Ingresa una cantidad no negativa",
+				)
+				
+				confirmacion = mensaje_game(
+						mensaje=f"Sería un total de {item_comprado.getPrecioCompra() * cantidad},
+						 ¿estás seguro?\n1.Sí\nX.No",
+						display=self.mostrar_inventario(),
+						is_input=True,
+						only_numbers=True,
+						back_option="x"
+				)
+				
 				if confirmacion is None:
 					mensaje_game("Compra cancelada.", self.mostrar_inventario())
 					return
+				
 				if self.cliente.getDinero() >= item_comprado.getPrecioCompra() * cantidad:
 						self.cliente.setDinero(self.cliente.getDinero() - item_comprado.getPrecioCompra() * cantidad)
 						mensaje_game(self.cliente.getMochila().guardar_objeto(item_comprado, cantidad), self.mostrar_inventario())
 						eleccion, cantidad, confirmacion = None, None, None
+						
 				else:
 						mensaje_game("No tienes suficiente dinero", self.mostrar_inventario())
+
+
+
+		def comprar(self):
+				def elegir_producto():
+						mensaje = f"¿Qué producto quieres llevarte?\n(x para salir)"
+						eleccion = mensaje_game(
+								mensaje=mensaje, 
+								display=self.mostrar_inventario(),
+								is_input=True,
+								only_numbers=True, 
+								back_option="x", 
+								validacion=lambda x: 0 <= int(x) < len(self.inventario),
+								mensaje_raise="Escoge un item válido por favor"
+						)
+						if eleccion.lower() == "x":
+								return "salir"
+						return int(eleccion) - 1
+
+				def elegir_cantidad():
+						mensaje = f"{item_comprado.getNombre()}?, buena elección\n¿Cuántas quieres llevarte?"
+						cantidad = mensaje_game(
+								mensaje=mensaje, 
+								display=self.mostrar_inventario(),
+								is_input=True,
+								only_numbers=True,
+								validacion=lambda x: int(x) > 0,
+								mensaje_raise="Ingresa una cantidad no negativa"
+						)
+						return int(cantidad)
+
+				def confirmar_compra():
+						total = item_comprado.getPrecio()*cantidad	# Aquí calculas el total si es necesario
+						mensaje = f"Sería un total de {total}. ¿Deseas realizar la compra?\n(y. Sí n. Cambiar cantidad p. Cambiar producto x. Salir)"
+						eleccion = mensaje_game(
+								mensaje=mensaje,
+								display=self.mostrar_inventario(),
+								is_input=True,
+								only_numbers=False,
+								back_option="x",
+								validacion=lambda x: x.lower() in ["y", "n", "p", "x"],
+								mensaje_raise="Ingresa una opción válida (y, n, p, x)"
+						)
+						return eleccion.lower()
+
+				estado = "producto"
+				item_comprado = None
+				cantidad = None
+
+				while estado != "salir":
+						if estado == "producto":
+								eleccion = elegir_producto()
+								if eleccion == "salir":
+										break
+								item_comprado = self.crear_item(self.inventario[eleccion][0])
+								estado = "cantidad"
+
+						elif estado == "cantidad":
+								cantidad = elegir_cantidad()
+								estado = "confirmar"
+
+						elif estado == "confirmar":
+								eleccion = confirmar_compra()
+								if eleccion == "y":
+										# Realiza la compra
+										if self.cliente.getDinero() >= item_comprado.getPrecioCompra() * cantidad:
+												self.cliente.setDinero(self.cliente.getDinero() - item_comprado.getPrecioCompra() * cantidad)
+												mensaje_game(self.cliente.getMochila().guardar_objeto(item_comprado, cantidad), self.mostrar_inventario())
+												estado, eleccion, cantidad = "producto", None, None
+												
+										else:
+												mensaje_game("No tienes suficiente dinero", self.mostrar_inventario())
+
+								elif eleccion == "n":
+										estado = "cantidad"
+
+								elif eleccion == "p":
+										estado = "producto"
+
+								elif eleccion == "x":
+										mensaje_game("Compra cancelada.", self.mostrar_inventario())
+										estado = "salir"
 
 
 
