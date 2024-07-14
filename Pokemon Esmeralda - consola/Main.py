@@ -34,6 +34,9 @@ COSAS POR HACER
 """
 
 
+
+
+
 steven = Entrenadores("Steven", 100000, 15, "entrenador pokemon", Mochila(), crear_pokemon_entrenador("Sobble"), crear_pokemon_entrenador("Ivysaur"), crear_pokemon_entrenador("Bulbasaur"), crear_pokemon_entrenador("Fennekin"), crear_pokemon_entrenador("Sobble"), crear_pokemon_entrenador("Oshawott"))
 
 

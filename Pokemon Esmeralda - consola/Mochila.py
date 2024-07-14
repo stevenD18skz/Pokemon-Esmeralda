@@ -1,4 +1,5 @@
 import os
+from data import mensaje_game
 from Estado import *
 #OPCION 3
 
@@ -159,12 +160,21 @@ class Mochila:
 
 
     def mostrar_bolsillo(self):
-        print(f"   🔴⭕>>>>>> ------ del jugador<<<<<<⭕🔴")
+        txt = []
+        txt.append("╔════════════════════════════════════════════════════════╗")
+        txt.append("║                        BOLSA                           ║")
+        txt.append("╠════════════════════════════════════════════════════════╣")
+        txt.append(f"   🔴⭕>>>>>> ------ del jugador<<<<<<⭕🔴")
         for objeto in range(len(self.bolsilloAbierto)):
             nombre = self.bolsilloAbierto[objeto][0].getNombre()
             cantidad = self.bolsilloAbierto[objeto][1]
             formatted_cant = "".ljust(15 - len(nombre))  # Ajustar el ancho según tus necesidades
-            print(f"            {objeto+1}. {nombre}    {formatted_cant}    cant: {cantidad}")
+            txt.append(f"            {objeto+1}. {nombre}    {formatted_cant}    cant: {cantidad}")
+        txt.append(f"\n  ◆ M.Medicinas        ◆ P.Pokeballs        ◆ X.Salir")
+        txt.append("╚════════════════════════════════════════════════════════╝")
+        
+        return "\n".join(txt)
+
 
 
     def guardar_objeto(self, obj_a_guardar, cant):
@@ -208,14 +218,13 @@ class Mochila:
 
     def abrir_mochila(self):
         while True:
-            #os.system('cls' if os.name == 'nt' else 'clear')
-            print("╔════════════════════════════════════════════════════════╗")
-            print("║                        BOLSA                           ║")
-            print("╠════════════════════════════════════════════════════════╣")
-            self.mostrar_bolsillo()
-            print(f"\n  ◆ M.Medicinas        ◆ P.Pokeballs        ◆ S.Salir")
-            print("╚════════════════════════════════════════════════════════╝")
-            eleccion = input("== ")
+            eleccion = mensaje_game(
+                    mensaje=f"escoge el item de tu mochila", 
+                    display=self.mostrar_bolsillo(),
+                    is_input=True,
+                    validacion=lambda x: x.lower() in ["m", "p", "x"] or (x.isdigit() and 1 <= int(x) <= len(self.bolsilloAbierto)),
+                    mensaje_raise=f"Escoge un item válido por favor .(1 - {len(self.bolsilloAbierto)})"
+            )
 
             if eleccion.upper() == "M":
                 self.bolsilloAbierto = self.bolsilloDeMedicina
