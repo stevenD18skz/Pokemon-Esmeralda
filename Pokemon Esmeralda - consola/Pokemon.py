@@ -9,6 +9,43 @@ COSAS POR HACER:
 -arreglar la parte de SQL en en la tablas que esten relacionadas con pokemon
 """
 
+import random
+
+# Diccionario de naturalezas
+NATURALEZAS = {
+    "Fuerte": [1, 1, 1, 1, 1],
+    "Osada": [0.9, 1.1, 1, 1, 1],
+    "Modesta": [0.9, 1, 1.1, 1, 1],
+    "Serena": [0.9, 1, 1, 1.1, 1],
+    "Miedosa": [0.9, 1, 1, 1, 1.1],
+    "Huraña": [1.1, 0.9, 1, 1, 1],
+    "Docil": [1, 1, 1, 1, 1],
+    "Afable": [1, 0.9, 1.1, 1, 1],
+    "Amable": [1, 0.9, 1, 1.1, 1],
+    "Activa": [1, 0.9, 1, 1, 1.1],
+    "Firme": [1.1, 1, 0.9, 1, 1],
+    "Agitada": [1, 1.1, 0.9, 1, 1],
+    "Timida": [1, 1, 1, 1, 1],
+    "Cauta": [1, 1, 0.9, 1.1, 1],
+    "Alegre": [1, 1, 0.9, 1, 1.1],
+    "Picara": [1.1, 1, 1, 0.9, 1],
+    "Floja": [1, 1.1, 1, 0.9, 1],
+    "Alocada": [1, 1, 1, 0.9, 1],
+    "Rara": [1, 1, 1, 1.1, 1],
+    "Ingenua": [1, 1, 1, 0.9, 1],
+    "Audaz": [1.1, 1, 1, 1, 0.9],
+    "Placida": [1, 1.1, 1, 1, 0.9],
+    "Mansa": [1, 1, 1.1, 1, 0.9],
+    "Grosera": [1, 1, 1, 1.1, 0.9],
+    "Seria": [1, 1, 1, 1, 1],
+}
+
+# Lista de nombres de naturalezas
+NOM_NATURALEZAS = list(NATURALEZAS.keys())
+
+
+
+
 class Pokemon:
     def __init__(self, nombre, especie, 
                  B_ps, B_ataque, B_ataque_especial, B_defensa, B_defensa_especial, B_velocidad, tipo1, tipo2, 
@@ -52,25 +89,7 @@ class Pokemon:
 
 
         #IVs y Naturaleza del pokemon
-        self.IVs = []
-        self.nomNaturaleza = ["vacia", 
-            "Fuerte", "Osada", "Modesta", "Serena", "Miedosa", 
-            "Huraña", "Docil", "Afable", "Amable", "Activa", "Firme", 
-            "Agitada", "Timida", "Cauta", "Alegre", "Picara", "Floja", 
-            "Alocada", "Rara", "Ingenua", "Audaz", "Placida", "Mansa", 
-            "Grosera", "Seria"]
-        self.posiblesNaturaleza = [[0, 0, 0, 0, 0], 
-            [1, 1, 1, 1, 1], [0.9, 1.1, 1, 1, 1], [0.9, 1, 1.1, 1, 1], 
-            [0.9, 1, 1, 1.1, 1], [0.9, 1, 1, 1, 1.1], [1.1, 0.9, 1, 1, 1], 
-            [1, 1, 1, 1, 1], [1, 0.9, 1.1, 1, 1], [1, 0.9, 1, 1.1, 1], 
-            [1, 0.9, 1, 1, 1.1], [1.1, 1, 0.9, 1, 1], [1, 1.1, 0.9, 1, 1], 
-            [1, 1, 1, 1, 1], [1, 1, 0.9, 1.1, 1], [1, 1, 0.9, 1, 1.1], 
-            [1.1, 1, 1, 0.9, 1], [1, 1.1, 1, 0.9, 1], [1, 1, 1, 0.9, 1], 
-            [1, 1, 1, 1.1, 1], [1, 1, 1, 0.9, 1], [1.1, 1, 1, 1, 0.9], 
-            [1, 1.1, 1, 1, 0.9], [1, 1, 1.1, 1, 0.9], [1, 1, 1, 1.1, 0.9], 
-            [1, 1, 1, 1, 1]]
-
-
+        self.IVs = [random.randint(1, 32) for _ in range(6)]
         self.Naturaleza = ""
         self.NaturalezaValores = [0.0, 0.0, 0.0, 0.0, 0.0]
         self.ps = 0
@@ -81,10 +100,9 @@ class Pokemon:
         self.defensa_especial = 0
         self.velocidad = 0
         self.experiencia = 0
-
-        self.Establecer_IV()
-        self.Naturaleza = self.nomNaturaleza[1]
-        self.NaturalezaValores = self.posiblesNaturaleza[1]
+        
+        self.Naturaleza = random.choice(NOM_NATURALEZAS)
+        self.NaturalezaValores = NATURALEZAS[self.Naturaleza]
         self.Establecer_Stats()
         self.experiencia = self.Establecer_exp(self.formula, self.nivel)
 
@@ -103,79 +121,44 @@ class Pokemon:
 
 
     def mostrar_informacion(self):#✔✔✔
-        print("◤────────────────────────────────────◥")
-        print(f"    🌀los stats de {self.nombre} son🌀")
-        print("┌────────────────────────────────────┐")
-        print(f"│  Nivel:{self.nivel}         Vida:{self.ps}/{self.M_ps}         │")
-        print(f"│  Ataque:{self.ataque}        Ataque Especial:{self.ataque_especial}   │")
-        print(f"│  Defensa:{self.defensa}       Defensa Especial:{self.defensa_especial}  │")
-        print(f"│  Velocidad:{self.velocidad}     Naturaleza:{self.Naturaleza}    │")
-        print(f"│  Estado:{self.estado_poke.nombre}  Experiencia:{self.experiencia}   │")
-        print("└────────────────────────────────────┘")
-        print("┌────────────────────────────────────┐")
-        print(f"│  Movimiento #1: {self.slotsDeMovimientos[0].nombre}   │")
-        print(f"│  Movimiento #2: {self.slotsDeMovimientos[1].nombre}   │")
-        print(f"│  Movimiento #3: {self.slotsDeMovimientos[2].nombre}   │")
-        print(f"│  Movimiento #4: {self.slotsDeMovimientos[3].nombre}   │")
-        print("└────────────────────────────────────┘")
-        print("┌────────────────────────────────────┐")
-        print(f"│  Ivs: {", ".join(map(str, self.IVs))}        │")
-        print(f"│  Pnt.Efz: {", ".join(map(str, self.puntosDeEzfuerzo))}         │")
-        print("└────────────────────────────────────┘")
-        print(f"◣────────────────────────────────────◢")
+        txt = []
+        txt.append("◤────────────────────────────────────◥")
+        txt.append(f"    🌀los stats de {self.nombre} son🌀")
+        txt.append("┌────────────────────────────────────┐")
+        txt.append(f"│  Nivel:{self.nivel}         Vida:{self.ps}/{self.M_ps}         │")
+        txt.append(f"│  Ataque:{self.ataque}        Ataque Especial:{self.ataque_especial}   │")
+        txt.append(f"│  Defensa:{self.defensa}       Defensa Especial:{self.defensa_especial}  │")
+        txt.append(f"│  Velocidad:{self.velocidad}     Naturaleza:{self.Naturaleza}    │")
+        txt.append(f"│  Estado:{self.estado_poke.nombre}  Experiencia:{self.experiencia}   │")
+        txt.append("└────────────────────────────────────┘")
+        txt.append("┌────────────────────────────────────┐")
+        txt.append(f"│  Movimiento #1: {self.slotsDeMovimientos[0].nombre}   │")
+        txt.append(f"│  Movimiento #2: {self.slotsDeMovimientos[1].nombre}   │")
+        txt.append(f"│  Movimiento #3: {self.slotsDeMovimientos[2].nombre}   │")
+        txt.append(f"│  Movimiento #4: {self.slotsDeMovimientos[3].nombre}   │")
+        txt.append("└────────────────────────────────────┘")
+        txt.append("┌────────────────────────────────────┐")
+        txt.append(f"│  Ivs: {", ".join(map(str, self.IVs))}        │")
+        txt.append(f"│  Pnt.Efz: {", ".join(map(str, self.puntosDeEzfuerzo))}         │")
+        txt.append("└────────────────────────────────────┘")
+        txt.append(f"◣────────────────────────────────────◢")
+        
+        return "\n".join(txt)
 
 
 
     def mostrarAtaques(self):#✔✔✔
-        print(f"◤{"─"*90}◥")
-        print(f"│ 1.", self.slotsDeMovimientos[0].getNombre(), " pp:", self.slotsDeMovimientos[0].getPP(), "/", self.slotsDeMovimientos[0].getMPP(), "                        2.", self.slotsDeMovimientos[1].getNombre(), " pp:", self.slotsDeMovimientos[1].getPP(), "/", self.slotsDeMovimientos[1].getMPP())
-        print(f"│    Tipo:", self.slotsDeMovimientos[0].getTipo(), "                                   Tipo:", self.slotsDeMovimientos[1].getTipo())
-        print(f"│")
-        print(f"│\n│ 3.", self.slotsDeMovimientos[2].getNombre(), " pp:", self.slotsDeMovimientos[2].getPP(), "/", self.slotsDeMovimientos[2].getMPP(), "                        4.", self.slotsDeMovimientos[3].getNombre(), " pp:", self.slotsDeMovimientos[3].getPP(), "/", self.slotsDeMovimientos[3].getMPP())
-        print(f"│    Tipo:", self.slotsDeMovimientos[2].getTipo(), "                                  Tipo:", self.slotsDeMovimientos[3].getTipo())
-        print(f"◣{"─"*90}◢")
-
-
-
-    def mostrarAtaques2(self):
-        # Initialize an empty string to store the output
-        output_string = ""
-
-        # Add the top border
-        output_string += f"◤{"─"*90}◥\n"
-
-        # Loop through the first two slots and format the information
-        for i in range(2):
-            slot = self.slotsDeMovimientos[i]
-            output_string += f"│ {i+1}. {slot.getNombre()} pp: {slot.getPP()} / {slot.getMPP()}  \t\t\t  {i+3}. {self.slotsDeMovimientos[i+2].getNombre()} pp: {self.slotsDeMovimientos[i+2].getPP()} / {self.slotsDeMovimientos[i+2].getMPP()}\n"
-            output_string += f"│   Tipo: {slot.getTipo()}  \t\t\t\t\t  Tipo: {self.slotsDeMovimientos[i+2].getTipo()}\n"
-
-        # Add the bottom border
-        output_string += f"◣{"─"*90}◢"
-
-        # Return the formatted string
-        return output_string
-
-
-
-
-    def mostrarAtaques3(self):
-        ataques = []
-        ataques.append(f"◤{'─'*90}◥")
-        ataques.append(f"│ 1. {self.slotsDeMovimientos[0].getNombre()} pp: {self.slotsDeMovimientos[0].getPP()}/{self.slotsDeMovimientos[0].getMPP()}                        2. {self.slotsDeMovimientos[1].getNombre()} pp: {self.slotsDeMovimientos[1].getPP()}/{self.slotsDeMovimientos[1].getMPP()}")
-        ataques.append(f"│    Tipo: {self.slotsDeMovimientos[0].getTipo()}                                   Tipo: {self.slotsDeMovimientos[1].getTipo()}")
-        ataques.append(f"│")
-        ataques.append(f"│ 3. {self.slotsDeMovimientos[2].getNombre()} pp: {self.slotsDeMovimientos[2].getPP()}/{self.slotsDeMovimientos[2].getMPP()}                        4. {self.slotsDeMovimientos[3].getNombre()} pp: {self.slotsDeMovimientos[3].getPP()}/{self.slotsDeMovimientos[3].getMPP()}")
-        ataques.append(f"│    Tipo: {self.slotsDeMovimientos[2].getTipo()}                                  Tipo: {self.slotsDeMovimientos[3].getTipo()}")
-        ataques.append(f"◣{'─'*90}◢")
+        txt = []
         
-        return "\n".join(ataques)
-
-
-
-
-    def Establecer_IV(self):#✔✔✔
-        self.IVs = [random.randint(1, 32) for _ in range(6)]
+        txt.append(f"◤{"─"*90}◥")
+        txt.append(f"│ 1. {self.slotsDeMovimientos[0].getNombre()} pp: {self.slotsDeMovimientos[0].getPP()} / {self.slotsDeMovimientos[0].getMPP()}                        2. {self.slotsDeMovimientos[1].getNombre()} pp: {self.slotsDeMovimientos[1].getPP()} / {self.slotsDeMovimientos[1].getMPP()}")
+        txt.append(f"│    Tipo: {self.slotsDeMovimientos[0].getTipo()}                                   Tipo: {self.slotsDeMovimientos[1].getTipo()}")
+        txt.append(f"│")
+        txt.append(f"│\n│ 3. {self.slotsDeMovimientos[2].getNombre()} pp: {self.slotsDeMovimientos[2].getPP()}/ {self.slotsDeMovimientos[2].getMPP()}                        4. {self.slotsDeMovimientos[3].getNombre()} pp: {self.slotsDeMovimientos[3].getPP()}/ {self.slotsDeMovimientos[3].getMPP()}")
+        txt.append(f"│    Tipo: {self.slotsDeMovimientos[2].getTipo()}                                  Tipo: {self.slotsDeMovimientos[3].getTipo()}")
+        txt.append(f"◣{"─"*90}◢")
+        
+        return "\n".join(txt)
 
 
 
@@ -249,10 +232,7 @@ class Pokemon:
         ATAQUE = self.slotsDeMovimientos[seleccion]
         self.slotsDeMovimientos[seleccion].setPP(self.slotsDeMovimientos[seleccion].getPP()-1)
 
-        bono = 1
-        if ATAQUE.getTipo() in (self.tipo1, self.tipo2):
-            bono = 1.5
-
+        bono = 1.5 if ATAQUE.getTipo() in (self.tipo1, self.tipo2) else 1
 
         def get_effectiveness(attack_type, defense_type):
             query = f"""
@@ -279,6 +259,25 @@ class Pokemon:
         mensajes = []
         if potencia_ataque != 0:
             daño = round(int(0.01 * bono * efectividad * variacion * (((0.2 * nivelDeAtacante + 1) * C_ataque * potencia_ataque) / (25 * C_defensa) + 2)))
+            
+            print("Valor de las variables:")
+            print(f"bono = {bono}")
+            print(f"efectividad = {efectividad}")
+            print(f"variacion = {variacion}")
+            print(f"nivelDeAtacante = {nivelDeAtacante}")
+            print(f"C_ataque = {C_ataque}")
+            print(f"potencia_ataque = {potencia_ataque}")
+            print(f"C_defensa = {C_defensa}")
+
+            print("\nResultado final:")
+            print(f"Resultado = {daño}")
+            
+            if self.nombre == "Bulbasaur":
+                exit()
+            
+            
+            
+            
             mensajes.append(f"🩸🩸🩸 el ataque de {self.nombre} ah causado {daño} puntos de Daño a {enemigo.nombre}  🩸🩸🩸")
             enemigo.setPs(enemigo.getPs()-daño)
 
@@ -286,19 +285,61 @@ class Pokemon:
         
 
         if enemigo.getEstado().getNombre() == "Normal🍞" and ATAQUE.getEfectoSecundario().getNombre() != "Normal🍞":
-            if ATAQUE.getprobabilidadDelEfecto() >= random.randint(0, 100):
+            if ATAQUE.getProbabilidadDelEfecto() >= random.randint(0, 100):
                 enemigo.setEstado(ATAQUE.getEfectoSecundario())
-                mensajes.append(enemigo.getEstado().aplicar_segundo_efecto(enemigo))
+                mensajes.extend(enemigo.getEstado().aplicar_segundo_efecto(enemigo))
                 mensajes.append(f"🦝🦝🦝 El estado de {enemigo.getNombre()} ah cambiado a {enemigo.getEstado().getNombre()} 🦝🦝🦝")
 
             else:
                 mensajes.append(f"🪬🪬🪬 EL ATAQUE NO AH ALCANZADO A APLICAR EL EFECTO SECUNDARIO  🪬")
         
         return mensajes
+
+
+
+    #RELACIONES CON DE MAS ENTIDADES
+    def recibir_objeto(self, medicina):
+        medicina.aplicar(self)
     
-        #daño = round(int(0.01 * bono * efectividad * variacion * (((0.2 * #nivelDeAtacante + 1) * C_ataque * potencia_ataque) / (25 * C_defensa) + 2)))
-        
-        #return daño
+
+
+    #METODOS CORRESPONEIDNTES CON LA SUBIDA DE NIVEL
+    def subir_de_nivel(self):#✔✔✔
+        self.Establecer_Stats()
+        self.hay_movimiento_por_aprender()
+        return self.se_puede_evolucionar()
+    
+    
+
+    def hay_movimiento_por_aprender(self):#✔✔✔
+        nombrePoke = self.nombre
+        nivelPoke = self.nivel
+
+        consultar_movimiento = f"""
+            SELECT movimiento.id_movimiento, movimiento.nombre AS nombre_movimiento
+            FROM pokemon
+            JOIN pokemon_movimiento ON pokemon.id_pokemon = pokemon_movimiento.id_pokemon
+            JOIN movimiento ON pokemon_movimiento.id_movimiento = movimiento.id_movimiento
+            WHERE pokemon.nombre = '{nombrePoke}' AND pokemon_movimiento.nivel = {nivelPoke}
+            LIMIT 0, 1000;
+        """
+        cursor.execute(consultar_movimiento)
+        try:
+            id_de_movimiento = cursor.fetchall()[0]
+
+        except IndexError:
+            return None
+
+
+        id_para_consulta = id_de_movimiento[0]
+        consulta_del_movimiento = f"""
+            SELECT * 
+            FROM movimiento
+            WHERE id_movimiento = {id_para_consulta}  
+        """
+        cursor.execute(consulta_del_movimiento)
+        datos_movimiento = cursor.fetchall()[0]
+        self.aprender_nuevo_movimiento(datos_movimiento)
 
 
 
@@ -339,39 +380,6 @@ class Pokemon:
     
 
 
-
-    def hay_movimiento_por_aprender(self):#✔✔✔
-        nombrePoke = self.nombre
-        nivelPoke = self.nivel
-
-        consultar_movimiento = f"""
-            SELECT movimiento.id_movimiento, movimiento.nombre AS nombre_movimiento
-            FROM pokemon
-            JOIN pokemon_movimiento ON pokemon.id_pokemon = pokemon_movimiento.id_pokemon
-            JOIN movimiento ON pokemon_movimiento.id_movimiento = movimiento.id_movimiento
-            WHERE pokemon.nombre = '{nombrePoke}' AND pokemon_movimiento.nivel = {nivelPoke}
-            LIMIT 0, 1000;
-        """
-        cursor.execute(consultar_movimiento)
-        try:
-            id_de_movimiento = cursor.fetchall()[0]
-
-        except IndexError:
-            return None
-
-        id_para_consulta = id_de_movimiento[0]
-        consulta_del_movimiento = f"""
-            SELECT * 
-            FROM movimiento
-            WHERE id_movimiento = {id_para_consulta}  
-        """
-        cursor.execute(consulta_del_movimiento)
-        datos_movimiento = cursor.fetchall()[0]
-        self.aprender_nuevo_movimiento(datos_movimiento)
-
-
-
-
     def se_puede_evolucionar(self):#✔✔✔
         print("=" * 34)
         nombrePoke = self.nombre
@@ -406,10 +414,7 @@ class Pokemon:
 
 
 
-    def subir_de_nivel(self):#✔✔✔
-        self.Establecer_Stats()
-        self.hay_movimiento_por_aprender()
-        return self.se_puede_evolucionar()
+
 
 
 

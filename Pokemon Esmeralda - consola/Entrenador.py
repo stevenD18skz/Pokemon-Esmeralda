@@ -1,19 +1,11 @@
 from Pokemon import *
-
 from Mochila import *
-#OPCION 3
-
-
-#equipoDelCampeon = [crear_pokemon_campeon(x[1:]) for x in datos_equipo]
-"""
-COSAS POR HACER:
--arreglar la parte de la evolucion 
-"""
+from data import interfaz_usuario
 
 
 
 class Entrenadores:
-    def __init__(self, nombre, dinero, edad, estatus, mochila, #✔✔✔
+    def __init__(self, nombre, dinero, edad, estatus, mochila,
                  pk_1, pk_2, pk_3, pk_4, pk_5, pk_6):
         self.nombre = nombre
         self.dinero = dinero
@@ -26,16 +18,19 @@ class Entrenadores:
 
 
 
-    def mostrar_informacion(self):#✔✔✔
-        print("Nombre:", self.nombre)
-        print("Dinero:", self.dinero)
-        print("Edad:", self.edad)
-        print("Estatus:", self.estatus)
-        print("Contador de Victorias:", self.contadorVictorias)
-        print("Contador de Derrotas: ", self.contadorDerrotas)
-        print("Equipo Pokemon:")
+    def mostrar_informacion(self):
+        txt = []
+        txt.append(f"Nombre: {self.nombre}")
+        txt.append(f"Dinero: {self.dinero}")
+        txt.append(f"Edad: {self.edad}")
+        txt.append(f"Estatus: {self.estatus}")
+        txt.append(f"Contador de Victorias: {self.contadorVictorias}")
+        txt.append(f"Contador de Derrotas:  {self.contadorDerrotas}")
+        txt.append(f"Equipo Pokemon:")
         for pokemon in self.equipo_Pokemon:
-            print(f" - {pokemon.getNombre()} (Nivel {pokemon.getNivel()})")
+            txt.append(f" - {pokemon.getNombre()} (Nivel {pokemon.getNivel()})")
+            
+        return "\n".join(txt)
 
 
 
@@ -50,49 +45,69 @@ class Entrenadores:
 
 
 
-
     def Adquirir_Pokemon(self, poke):#✔✔✔
+        message = []
+        
         if poke.getEspecie() == "NINE":
             return
+        
         for espacio in range(6):
             if self.equipo_Pokemon[espacio].getEspecie() == "NINE":
                 self.equipo_Pokemon[espacio] = poke
-                print(f"{poke.getNombre()} se ha unido al equipo de {self.nombre}.")
-                return
-        print("el pokemon ah sido mandado al valle")
+                
+                message.append(f"{poke.getNombre()} se ha unido al equipo de {self.nombre}.")
+                return message
+            
+        message.append("el pokemon ah sido mandado al valle")
+        return message
 
 
 
     def usar_mochila(self):
+        message = []
         while True:
-            objeto_sacado = self.mochila.abrir_mochila()
-            #no saco ningun objeto
-            if not objeto_sacado:
-                print("(se cierra la mochila)")
-                return
+            objeto_sacado = self.mochila.sacar_objeto()
             
-            eleccion_uso = int(input("1.usar       2.dar\n3.tirar      4.salir\n=="))
-
-            if eleccion_uso == 4:
-                pass
-
-            elif eleccion_uso == 1:
+            #no saco ningun objeto
+            if objeto_sacado is None:
+                message.append("(se cierra la mochila)")
+                return message
+            
+            #eleccion_uso = int(input("1.usar       2.dar\n3.tirar      4.salir\n=="))
+            
+            eleccion_uso = interfaz_usuario(
+                "U.usar       S.dar\nT.tirar      X.salir",
+                display=self.Mochila.mostrar_bolsillo(),
+                is_input=True,
+                validacion=lambda x: x.lower() in ["u","d","t","x",]
+            )
+            
+            if eleccion_uso == 1:
                 if objeto_sacado.getTipo() != "pokéball":
                     while True:
-                        self.imprimir_pokemons()
-                        objetivo = int(input(f"///Ah que pokemon le quieres dar la medicina\n== "))-1
+                        objetivo = interfaz_usuario(
+                            f"///Ah que pokemon le quieres dar la medicina\n== ",
+                            display=self.imprimir_pokemons(),
+                            is_input=True,
+                            validacion=lambda x: x.isdigit() and 1 <= int(x) <= 6,
+                            mensaje_raise="❌❌❌ POR FAVOR ELIGE UNA OPCIÓN VÁLIDA, POR FAVOR ❌❌❌"
+                        )
+                        
                         if (self.equipo_Pokemon[objetivo].getPs() == 0 or
-                            self.equipo_Pokemon[objetivo].getEspecie() == "NINE" or
-                            objetivo < 0 or objetivo > 5):
-                            print("❌❌❌ POR FAVOR ELIGE UNA OPCIÓN VÁLIDA, POR FAVOR ❌❌❌\n")
-                        else:
-                            break
-                    
+                            self.equipo_Pokemon[objetivo].getEspecie() == "NINE"):
+                            interfaz_usuario(
+                                "❌❌❌ POR FAVOR ELIGE UNA OPCIÓN VÁLIDA, POR FAVOR ❌❌❌\n",
+                                display=self.imprimir_pokemons()
+                            )
+                            continue
+
+                        break
+
                     objeto_sacado.sanarPokemon(self.equipo_Pokemon[objetivo])
-                    print(f"🍂🍂🍂 SE AH USADO EL OBJETOOOO 🍂🍂🍂")
+                    message.append(f"🍂🍂🍂 SE AH USADO EL OBJETOOOO 🍂🍂🍂")
                 
                 else:
-                    print("cada objeto a su tiempo")
+                    message.append("cada objeto a su tiempo")
 
 
 
@@ -132,6 +147,8 @@ class Entrenadores:
 
     def getMochila(self):
         return self.mochila
+
+
 
 
 
@@ -208,3 +225,50 @@ def crear_oponente(campeon):
     #equipoDelCampeon = [crear_pokemon_campeon(datos_equipo[i][1:]) if i < len(datos_equipo) else crear_pokemon_entrenador("") for i in range(6)]
     #equipoDelCampeon = map(lambda x: crear_pokemon_campeon(x[1:]), datos_equipo)
     return Entrenadores(*datos_campeon, Mochila(), *equipoDelCampeon)
+
+
+"""    def usar_mochila(self):
+        while True:
+            objeto_sacado = self.mochila.abrir_mochila()
+            #no saco ningun objeto
+            if not objeto_sacado:
+                print("(se cierra la mochila)")
+                return
+            
+            eleccion_uso = int(input("1.usar       2.dar\n3.tirar      4.salir\n=="))
+
+            if eleccion_uso == 4:
+                pass
+
+            elif eleccion_uso == 1:
+                if objeto_sacado.getTipo() != "pokéball":
+                    while True:
+                        self.imprimir_pokemons()
+                        objetivo = int(input(f"///Ah que pokemon le quieres dar la medicina\n== "))-1
+                        if (self.equipo_Pokemon[objetivo].getPs() == 0 or
+                            self.equipo_Pokemon[objetivo].getEspecie() == "NINE" or
+                            objetivo < 0 or objetivo > 5):
+                            print("❌❌❌ POR FAVOR ELIGE UNA OPCIÓN VÁLIDA, POR FAVOR ❌❌❌\n")
+                        else:
+                            break
+                    
+                    objeto_sacado.sanarPokemon(self.equipo_Pokemon[objetivo])
+                    print(f"🍂🍂🍂 SE AH USADO EL OBJETOOOO 🍂🍂🍂")
+                
+                else:
+                    print("cada objeto a su tiempo")
+while True:
+    try:
+        self.imprimir_pokemons()
+        objetivo = int(input(f"///Ah que pokemon le quieres dar la medicina\n== "))-1
+        
+        if (self.equipo_Pokemon[objetivo].getPs() == 0 or
+            self.equipo_Pokemon[objetivo].getEspecie() == "NINE" or
+            objetivo < 0 or objetivo > 5):
+            message.append("❌❌❌ POR FAVOR ELIGE UNA OPCIÓN VÁLIDA, POR FAVOR ❌❌❌\n")
+        else:
+            break
+    except:
+        print("hubo un erro")
+"""
+                    

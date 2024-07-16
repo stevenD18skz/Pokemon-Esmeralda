@@ -2,7 +2,6 @@ from Algoritmo_De_Batalla import *
 from Bosque import *
 from Tienda import *
 from data import interfaz_usuario
-#OPCION 3
 """
 #1.gengar
 #2.rowlet
@@ -33,49 +32,41 @@ COSAS POR HACER
 20-terminar de acomodar la parte de captura para no capturar de entrenadores
 """
 
-
-
-
-
-
-
-
-steven = Entrenadores("Steven", 100000, 15, "entrenador pokemon", Mochila(), crear_pokemon_entrenador("Sobble"), crear_pokemon_entrenador("Ivysaur"), crear_pokemon_entrenador("Bulbasaur"), crear_pokemon_entrenador("Fennekin"), crear_pokemon_entrenador("Sobble"), crear_pokemon_entrenador("Oshawott"))
+steven = Entrenadores("Steven", 100000, 15, "entrenador pokemon", Mochila(), 
+                      crear_pokemon_entrenador("Sobble"), 
+                      crear_pokemon_entrenador("Ivysaur"), 
+                      crear_pokemon_entrenador("Bulbasaur"), 
+                      crear_pokemon_entrenador("Fennekin"), 
+                      crear_pokemon_entrenador("Sobble"), 
+                      crear_pokemon_entrenador("Oshawott")
+                      )
 
 
 def main_display():
-  txt = """
-    ──────────────────────────────────────────────
-    👤 Jugador: Ash      💰 Dinero: 100000      ⏰ Hora: 12:00 PM
-    ──────────────────────────────────────────────
-
-                    🌳🌳🌳🌳🌳🌳🌳🌳🌳
-                    🌳                  🌳
-                    🌳  🏠👨           🌳
-                    ←                       →
-                    🌳                  🌳
-                    🌳                  🌳
-                    🌳🌳🌳🌳🌳🌳🌳🌳🌳
-  """
-  
-  return txt
+    txt = []
+    txt.append("──────────────────────────────────────────────")
+    txt.append("👤 Jugador: Ash      💰 Dinero: 100000      ⏰ Hora: 12:00 PM")
+    txt.append("──────────────────────────────────────────────")
+    txt.append("")
+    txt.append("                🌳🌳🌳🌳🌳🌳🌳🌳🌳")
+    txt.append("                🌳                  🌳")
+    txt.append("                🌳  🏠👨           🌳")
+    txt.append("                ←                       →")
+    txt.append("                🌳                  🌳")
+    txt.append("                🌳                  🌳")
+    txt.append("                🌳🌳🌳🌳🌳🌳🌳🌳🌳")
+                    
+    return "\n".join(txt)
  
 
 
 while True:
     eleccion = interfaz_usuario(
-        f"""
-        \n──────────────────────────────────────────────
-        \n📋 Acciones:
-        \n1. Ir al bosque     2. Luchar contra un entrenador     3. Ir a la tienda
-        \nE. Menú             X. Salir del juego
-        \n──────────────────────────────────────────────   
-          
-        Presiona la tecla correspondiente para seleccionar una acción.
+        f"""──────────────────────────────────────────────\n📋 Acciones:\n1. Ir al bosque     2. Luchar contra un entrenador     3. Ir a la tienda\nE. Menú             X. Salir del juego\n──────────────────────────────────────────────\n\nPresiona la tecla correspondiente para seleccionar una acción.
         """,
         display=main_display(),
         is_input=True,
-        validacion=lambda x: x.lowe() in ["1","2","3","e","x",],
+        validacion=lambda x: x.lower() in ["1","2","3","e","x",],
         mensaje_raise="xxxxxxxxxxxxxxxxxxxxx"
     )
 
@@ -97,15 +88,26 @@ while True:
 
     elif eleccion.upper() == "E":
         while True:
-            eleccion_menu = interfaz_usuario(f"1.POKEDEX\n2.POKEMONS\n3.MOCHILA\n4.{steven.getNombre()}\n5.GUARDAR\n6.OPCIONES\n7.SALIR", is_input=True)
+            eleccion_menu = interfaz_usuario(
+                f"""──────────────────────────────────────────────\n📋 Acciones:\n1.POKEDEX\n2.POKEMONS\n3.MOCHILA\n4.{steven.getNombre()}\n5.GUARDAR\n6.OPCIONES\n7.SALIR\n──────────────────────────────────────────────\n\nPresiona la tecla correspondiente para seleccionar una acción.
+                """,
+                display=main_display(),
+                is_input=True,
+                validacion=lambda x: x.lower() in ["1","2","3","4","5","6","7"],
+                mensaje_raise="xxxxxxxxxxxxxxxxxxxxx"
+            )
+                    
+            
+            
+            
             if eleccion_menu == "1":
                 print("aun no disponible")
             if eleccion_menu == "2":
-                steven.imprimir_pokemons()
+                interfaz_usuario(steven.imprimir_pokemons())
             if eleccion_menu == "3":
                 steven.usar_mochila()
             if eleccion_menu == "4":
-                steven.mostrar_informacion()
+                interfaz_usuario( steven.mostrar_informacion())
             if eleccion_menu == "5":
                 print("aun no disponible")
             if eleccion_menu == "6":

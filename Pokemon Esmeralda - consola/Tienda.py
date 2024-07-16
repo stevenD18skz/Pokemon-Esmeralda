@@ -3,7 +3,7 @@ from Entrenador import *
 from data import interfaz_usuario
 
 
-
+#CLASE COMPLETA
 class Tienda:
     """
     Representa una tienda Pokémon donde los clientes pueden comprar y vender objetos.
@@ -60,8 +60,8 @@ class Tienda:
             El mensaje que se mostrará si la validación de la entrada falla.
         """
         return interfaz_usuario(
-            mensaje,
-            display=self.mostrar_inventario,
+            *mensaje,
+            display=self.mostrar_inventario(),
             is_input=is_input,
             validacion=validacion,
             mensaje_raise=mensaje_raise
@@ -103,6 +103,55 @@ class Tienda:
 
 
     def comprar(self):
+        """
+        Permite al cliente comprar objetos de la tienda.
+
+        Este método guía al usuario a través del proceso de compra de un objeto en la tienda.
+        Incluye la selección del objeto, la cantidad deseada, y la confirmación de la compra.
+        Si el cliente no tiene suficiente dinero, la compra no se realiza.
+
+        Pasos:
+        ------
+        1. Elegir Producto:
+            - El usuario selecciona el producto que desea comprar del inventario.
+            - Si el usuario decide cancelar la compra, puede hacerlo ingresando 'x'.
+
+        2. Elegir Cantidad:
+            - Una vez seleccionado el producto, el usuario indica cuántas unidades desea comprar.
+            - La cantidad debe ser un número entero positivo.
+
+        3. Confirmar Compra:
+            - El usuario confirma la compra.
+            - Las opciones disponibles son:
+                'y' - Sí, realizar la compra.
+                'n' - No, cambiar la cantidad.
+                'p' - Cambiar el producto.
+                'x' - Cancelar la compra.
+
+        Retornos:
+        ---------
+        bool
+            False si la compra fue cancelada o no se pudo realizar debido a fondos insuficientes.
+            True si la compra fue realizada exitosamente.
+
+        Manejo de Excepciones:
+        ----------------------
+        ValueError:
+            Si ocurre un ValueError durante la ejecución, se muestra un mensaje de error y se solicita una nueva entrada.
+        
+        KeyboardInterrupt:
+            Si el usuario interrumpe la ejecución con un comando especial (por ejemplo, Ctrl+C), se muestra un mensaje 
+            de cancelación y se solicita una nueva entrada.
+        
+        Exception:
+            Cualquier otra excepción se captura y se muestra un mensaje de error inesperado, retornando False.
+
+        Ejemplos de Uso:
+        ----------------
+        tienda = Tienda()
+        tienda.recibir_jugador(cliente)
+        tienda.comprar()
+        """
         def elegir_producto():
             mensaje = f"¿Qué producto quieres llevarte?\n(x para salir)"
             eleccion = self.interfaz_tienda(
@@ -161,12 +210,13 @@ class Tienda:
                 if eleccion == "y":  # Realiza la compra
                     if self.cliente.getDinero() >= item_comprado.getPrecioCompra() * cantidad:
                         self.cliente.setDinero(self.cliente.getDinero() - item_comprado.getPrecioCompra() * cantidad)
-                        self.interfaz_tienda(self.cliente.getMochila().guardar_objeto(item_comprado, cantidad))
+                        self.interfaz_tienda(*self.cliente.getMochila().guardar_objeto(item_comprado, cantidad))
 
                         estado, eleccion, cantidad = "producto", None, None
                                 
                     else:
                         self.interfaz_tienda(f"No tienes suficiente dinero")
+                        estado = "cantidad"
 
                 elif eleccion == "n":
                     estado = "cantidad"
@@ -202,8 +252,11 @@ class Tienda:
         """
         Permite al cliente vender objetos a la tienda.
         """
-        objeto = self.cliente.getMochila().abrir_mochila()
-
+        objeto = self.cliente.getMochila().sacar_objeto()
+        if objeto is None:
+            self.interfaz_tienda("NO SELECCIONASTE NINGIN OBJETO")
+            return
+        
         while True:
             cantidad = self.interfaz_tienda(
                 f"¿Cuántos {objeto.getNombre()} quieres vender?\n('x' para salir)",

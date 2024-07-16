@@ -1,7 +1,5 @@
-import os
 from data import interfaz_usuario
 from Estado import *
-#OPCION 3
 
 
 
@@ -154,9 +152,9 @@ class Mochila:
     def __init__(self):
         self.bolsilloDeMedicina = [[crearItem("Poción"),30], [crearItem("Limonada"),30]]
         self.bolsilloDePokeBalls = [[crearItem("Ultraball"),20]]
-
-
+        
         self.bolsilloAbierto = self.bolsilloDeMedicina
+
 
 
     def mostrar_bolsillo(self):
@@ -178,6 +176,8 @@ class Mochila:
 
 
     def guardar_objeto(self, obj_a_guardar, cant):
+        message = []
+        
         self.bolsilloAbierto = self.bolsilloDeMedicina
         if obj_a_guardar.getTipo() == "pokéball":
             self.bolsilloAbierto = self.bolsilloDePokeBalls
@@ -185,26 +185,27 @@ class Mochila:
         for add in range(len(self.bolsilloAbierto)):
             if self.bolsilloAbierto[add][0].getNombre() == obj_a_guardar.getNombre():
                 self.bolsilloAbierto[add][1] += cant
-                return f"Las {cant} {obj_a_guardar.getNombre()} han sido añadidas a tu bolsa, tienes en total {self.bolsilloAbierto[add][1]}"
+                message.append(f"Las {cant} {obj_a_guardar.getNombre()} han sido añadidas a tu bolsa, tienes en total {self.bolsilloAbierto[add][1]}")
+                return message
                 
         
         #si es un objeto que no habia antes
         self.bolsilloAbierto.insert(0, [obj_a_guardar, cant])
-        return f"has adquirido un nuevo objeto\nLas {cant} {obj_a_guardar.getNombre()} han sido añadidas a tu bolsa, tienes en total {self.bolsilloAbierto[0][1]}"
+        message.append(f"has adquirido un nuevo objeto\nLas {cant} {obj_a_guardar.getNombre()} han sido añadidas a tu bolsa, tienes en total {self.bolsilloAbierto[0][1]}")
+        return message
 
 
 
 
     def usar_objeto(self, objUsado, cantidad):
-        for x in self.bolsilloAbierto:
-            if x[0] == objUsado:
-                x[1] -= cantidad
+        for objeto in self.bolsilloAbierto:
+            if objeto[0] == objUsado:
+                objeto[1] -= cantidad
     
 
 
 
     def tirar(self, objetoAtirar, cantidad):
-        #list(map(lambda x: print(x), self.bolsilloAbierto))
         for objeto in self.bolsilloAbierto:
             if objeto[0] == objetoAtirar:
                 objeto[1] -= cantidad
@@ -212,33 +213,26 @@ class Mochila:
 
         
 
-
-
-
-
-    def abrir_mochila(self):
+    def sacar_objeto(self):
         while True:
-            eleccion = interfaz_usuario(
-                    mensaje=f"escoge el item de tu mochila", 
-                    display=self.mostrar_bolsillo(),
-                    is_input=True,
-                    validacion=lambda x: x.lower() in ["m", "p", "x"] or (x.isdigit() and 1 <= int(x) <= len(self.bolsilloAbierto)),
-                    mensaje_raise=f"Escoge un item válido por favor .(1 - {len(self.bolsilloAbierto)})"
-            )
+            eleccion = (interfaz_usuario(
+                f"escoge el item de tu mochila", 
+                display=self.mostrar_bolsillo(),
+                is_input=True,
+                validacion=lambda x: x.lower() in ["m", "p", "x"] or (x.isdigit() and 1 <= int(x) <= len(self.bolsilloAbierto)),
+                mensaje_raise=f"❌❌❌Escoge una de las opciones o un item válido por favor .(1 - {len(self.bolsilloAbierto)})❌❌❌"
+            )).lower()
 
-            if eleccion.upper() == "M":
+            if eleccion == "m":
                 self.bolsilloAbierto = self.bolsilloDeMedicina
 
-            elif eleccion.upper() == "P":
+            elif eleccion == "p":
                 self.bolsilloAbierto = self.bolsilloDePokeBalls
 
-            elif eleccion.upper() == "S":
+            elif eleccion == "x":
                 return None
-
-            elif int(eleccion) >= 1 or int(eleccion) < len(self.bolsilloAbierto[0]):
+                
+            else:
                 item = self.bolsilloAbierto[int(eleccion)-1][0]
                 return item
-
-            else:
-                print("❌❌❌Escoge una Opcion valida porfavor❌❌❌")
         
