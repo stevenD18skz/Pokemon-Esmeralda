@@ -1,7 +1,7 @@
 from Algoritmo_De_Batalla import *
 from Bosque import *
 from Tienda import *
-from data import mensaje_game, mensajes_exterior
+from data import interfaz_usuario
 #OPCION 3
 """
 #1.gengar
@@ -37,45 +37,81 @@ COSAS POR HACER
 
 
 
+
+
+
 steven = Entrenadores("Steven", 100000, 15, "entrenador pokemon", Mochila(), crear_pokemon_entrenador("Sobble"), crear_pokemon_entrenador("Ivysaur"), crear_pokemon_entrenador("Bulbasaur"), crear_pokemon_entrenador("Fennekin"), crear_pokemon_entrenador("Sobble"), crear_pokemon_entrenador("Oshawott"))
 
 
+def main_display():
+  txt = """
+    ──────────────────────────────────────────────
+    👤 Jugador: Ash      💰 Dinero: 100000      ⏰ Hora: 12:00 PM
+    ──────────────────────────────────────────────
+
+                    🌳🌳🌳🌳🌳🌳🌳🌳🌳
+                    🌳                  🌳
+                    🌳  🏠👨           🌳
+                    ←                       →
+                    🌳                  🌳
+                    🌳                  🌳
+                    🌳🌳🌳🌳🌳🌳🌳🌳🌳
+  """
+  
+  return txt
+ 
+
+
 while True:
-	eleccion = mensaje_game(f"1.ir al bosque\n2.luchar contra algun entrenador\n3.ir a la tineda\nE.Menu\nX.salir del juego", is_input=True)
+    eleccion = interfaz_usuario(
+        f"""
+        \n──────────────────────────────────────────────
+        \n📋 Acciones:
+        \n1. Ir al bosque     2. Luchar contra un entrenador     3. Ir a la tienda
+        \nE. Menú             X. Salir del juego
+        \n──────────────────────────────────────────────   
+          
+        Presiona la tecla correspondiente para seleccionar una acción.
+        """,
+        display=main_display(),
+        is_input=True,
+        validacion=lambda x: x.lowe() in ["1","2","3","e","x",],
+        mensaje_raise="xxxxxxxxxxxxxxxxxxxxx"
+    )
 
 
-	if eleccion == "1":
-		BosqueViejoPokemon().iniciar_combate_pokemon(steven)
+    if eleccion == "1":
+        BosqueViejoPokemon().iniciar_combate_pokemon(steven)
 
 
-	elif eleccion == "2":
-		Lance = crear_oponente("Lance")
-		figth = AlgoritmoDeBatalla()
-		figth.LUCHA_CONTRA_ENTRENADOR(steven, Lance)
+    elif eleccion == "2":
+        Lance = crear_oponente("Lance")
+        figth = AlgoritmoDeBatalla()
+        figth.LUCHA_CONTRA_ENTRENADOR(steven, Lance)
 
 
-	elif eleccion == "3":
-		store = Tienda()
-		store.recibir_jugador(steven)
+    elif eleccion == "3":
+        store = Tienda()
+        store.recibir_jugador(steven)
 
 
-	elif eleccion.upper() == "E":
-		while True:
-			eleccion_menu = mensaje_game(f"1.POKEDEX\n2.POKEMONS\n3.MOCHILA\n4.{steven.getNombre()}\n5.GUARDAR\n6.OPCIONES\n7.SALIR", is_input=True)
-			if eleccion_menu == "1":
-				print("aun no disponible")
-			if eleccion_menu == "2":
-				steven.imprimir_pokemons()
-			if eleccion_menu == "3":
-				steven.usar_mochila()
-			if eleccion_menu == "4":
-				steven.mostrar_informacion()
-			if eleccion_menu == "5":
-				print("aun no disponible")
-			if eleccion_menu == "6":
-				print("aun no disponible")
-			if eleccion_menu == "7":
-				break
+    elif eleccion.upper() == "E":
+        while True:
+            eleccion_menu = interfaz_usuario(f"1.POKEDEX\n2.POKEMONS\n3.MOCHILA\n4.{steven.getNombre()}\n5.GUARDAR\n6.OPCIONES\n7.SALIR", is_input=True)
+            if eleccion_menu == "1":
+                print("aun no disponible")
+            if eleccion_menu == "2":
+                steven.imprimir_pokemons()
+            if eleccion_menu == "3":
+                steven.usar_mochila()
+            if eleccion_menu == "4":
+                steven.mostrar_informacion()
+            if eleccion_menu == "5":
+                print("aun no disponible")
+            if eleccion_menu == "6":
+                print("aun no disponible")
+            if eleccion_menu == "7":
+                break
 
-	elif eleccion.upper() == "X":
-		break
+    elif eleccion.upper() == "X":
+        break

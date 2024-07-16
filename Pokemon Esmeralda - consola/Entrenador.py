@@ -39,11 +39,15 @@ class Entrenadores:
 
 
 
-    def imprimir_pokemons(self):#✔✔✔
+    def imprimir_pokemons(self):
+        txt = []
         for i in range(0, 6, 2):
-            print(f"{i+1}.{self.equipo_Pokemon[i].getNombre()}                  {i+2}.{self.equipo_Pokemon[i+1].getNombre()}")
-            print(f"Nv: {self.equipo_Pokemon[i].getNivel()}    Est: {self.equipo_Pokemon[i].getEstado().getNombre()}      Nv: {self.equipo_Pokemon[i+1].getNivel()}    Est: {self.equipo_Pokemon[i+1].getEstado().getNombre()}")
-            print(f"💚>{self.equipo_Pokemon[i].getPs()}/{self.equipo_Pokemon[i].getMps()}<💚              💚>{self.equipo_Pokemon[i+1].getPs()}/{self.equipo_Pokemon[i+1].getMps()}<💚\n")
+            txt.append(f"{i+1}.{self.equipo_Pokemon[i].getNombre()}                  {i+2}.{self.equipo_Pokemon[i+1].getNombre()}")
+            txt.append(f"Nv: {self.equipo_Pokemon[i].getNivel()}    Est: {self.equipo_Pokemon[i].getEstado().getNombre()}      Nv: {self.equipo_Pokemon[i+1].getNivel()}    Est: {self.equipo_Pokemon[i+1].getEstado().getNombre()}")
+            txt.append(f"💚>{self.equipo_Pokemon[i].getPs()}/{self.equipo_Pokemon[i].getMps()}<💚              💚>{self.equipo_Pokemon[i+1].getPs()}/{self.equipo_Pokemon[i+1].getMps()}<💚\n")
+        
+        return '\n'.join(txt)
+
 
 
 

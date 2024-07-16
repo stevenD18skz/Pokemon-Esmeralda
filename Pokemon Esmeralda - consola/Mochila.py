@@ -1,5 +1,5 @@
 import os
-from data import mensaje_game
+from data import interfaz_usuario
 from Estado import *
 #OPCION 3
 
@@ -218,7 +218,7 @@ class Mochila:
 
     def abrir_mochila(self):
         while True:
-            eleccion = mensaje_game(
+            eleccion = interfaz_usuario(
                     mensaje=f"escoge el item de tu mochila", 
                     display=self.mostrar_bolsillo(),
                     is_input=True,

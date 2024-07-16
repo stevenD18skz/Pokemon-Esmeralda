@@ -5,8 +5,8 @@ import os
 #la entrada recibe numeros y una letra que es para salir
 #la entrada recibe string(contando numeros y caracteres)
 
-def mensaje_game(
-        mensaje, 
+def interfaz_usuario(
+        *mensaje,
         display="",
         
         is_input=False, 
@@ -71,41 +71,45 @@ def mensaje_game(
         if entrada:
             print(f"Entrada válida: {entrada}")
     """
-    while True:
-        os.system('cls' if os.name == 'nt' else 'clear')
-        print(display)
-        try:
-            if not is_input:
-                print(f"{mensaje}")
-                input("----------")
-                return None
- 
-            else:
-                entrada = input(f"{mensaje}\n🔱⚜️ ==")
-                
-                if validacion and not validacion(entrada):
-                    mensaje_game(mensaje_raise, display=display)
-                    continue
-                
+    
+    def funcion_interna(m):
+        while True:
+            os.system('cls' if os.name == 'nt' else 'clear')
+            print(display)
+            try:
+                if not is_input:
+                    print(f"{m}")
+                    input("----------")
+                    return None
+    
                 else:
-                    return entrada
+                    entrada = input(f"{m}\n🔱⚜️ ==")
+                    
+                    if validacion and not validacion(entrada):
+                        interfaz_usuario(mensaje_raise, display=display)
+                        continue
+                    
+                    else:
+                        return entrada
+                
+                
+            except ValueError as ve:
+                interfaz_usuario(f"Error: {ve}", display=display)
+                continue
+            except KeyboardInterrupt:
+                interfaz_usuario("Operación cancelada, no ingreses comandos especiales", display=display)
+                continue
+            except Exception as e:
+                interfaz_usuario(f"Error inesperado: {e}", display=display)
+                return None
             
-            
-        except ValueError as ve:
-            mensaje_game(f"Error: {ve}", display=display)
-            continue
-        except KeyboardInterrupt:
-            mensaje_game("Operación cancelada, no ingreses comandos especiales", display=display)
-            continue
-        except Exception as e:
-            mensaje_game(f"Error inesperado: {e}", display=display)
-            return None
+
+    e = None
+    for m in mensaje:
+        e = funcion_interna(m)
         
-
-
-
-def mensajes_exterior(mensajes, fun=None):
-    for mensaje in mensajes:
-        mensaje_game(mensaje, fun)
+    return e
+        
+    
 
 
