@@ -254,7 +254,7 @@ class Pokemon:
 
         C_defensa = enemigo.getDefensaEspecial() if ATAQUE.clase == "Especial" else enemigo.getDefensa()
 
-        potencia_ataque = ATAQUE.getPotencia()
+        potencia_ataque = ATAQUE.getPotencia() + 1
 
         mensajes = []
         if potencia_ataque != 0:
