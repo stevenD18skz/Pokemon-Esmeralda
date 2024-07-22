@@ -8,7 +8,6 @@ import os
 def interfaz_usuario(
         *mensaje,
         display="",
-        
         is_input=False, 
         validacion=None, 
         mensaje_raise="",

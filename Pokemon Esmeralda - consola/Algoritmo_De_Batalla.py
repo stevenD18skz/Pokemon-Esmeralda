@@ -132,8 +132,6 @@ class AlgoritmoDeBatalla:
             if seleccion_ataque.lower() == "x":
                 return None
 
-
-
             seleccion_ataque = int(seleccion_ataque) - 1 
             selected_attack = self.QUESI.getMovimiento(seleccion_ataque)
 
@@ -141,7 +139,7 @@ class AlgoritmoDeBatalla:
                 self.mensaje_batalla("❌❌❌Escoge un ataque valido❌❌❌", )
             
             elif selected_attack.getPP() == 0:
-                self.mensaje_batalla(f"{selected_attack.getNombre()} no se puede realizar ya que su pp es 0")
+                self.mensaje_batalla(f"❌❌❌{selected_attack.getNombre()} no se puede realizar ya que su pp es 0❌❌❌")
                 
             else:
                 return seleccion_ataque
@@ -216,7 +214,7 @@ class AlgoritmoDeBatalla:
             seleccion_cambio = self.mensaje_batalla(
                 f"Escoge el pokemon que deseas que salga a luchar\n{self.PLAYER.imprimir_pokemons()}\nPulsa {EXIT_OPTION} para salir",
                 is_input=True,
-                validacion=lambda x: x.lower() == "x" or (x.isdigit() and 1 <= x <= 6),
+                validacion=lambda x: x.lower() == "x" or (x.isdigit() and 1 <= int(x) <= 6),
                 mensaje_raise="❌❌❌Escoge un pokemon valido porfavor❌❌❌"
             )
 
@@ -271,6 +269,7 @@ class AlgoritmoDeBatalla:
         else:
             self.mensaje_batalla("no has podido escapar del combateeee")
             return False
+        
 
 
 
@@ -303,8 +302,9 @@ class AlgoritmoDeBatalla:
 
 
                 elif mainSeleccion == 2:
-                    while True:
-                        objeto_sacado = self.PLAYER.getMochila().abrir_mochila()
+                    punto_control_2 = True
+                    while punto_control_2:
+                        objeto_sacado = self.PLAYER.getMochila().sacar_objeto()
                         
                         #no saco ningun objeto
                         if not objeto_sacado:
@@ -312,47 +312,54 @@ class AlgoritmoDeBatalla:
                             break
 
                         eleccion_uso = int(self.mensaje_batalla(
-                            mensaje="1.usar       2.salir\n==",
+                            "1.usar       2.salir",
                             is_input=True,
-                            validacion=lambda x: x in ['1','2']
+                            validacion=lambda x: x in ['1','2'],
+                            mensaje_raise="Escoge una opcion entre (1 . 2)"
                         ))
-                        if eleccion_uso == 1:
-                            if objeto_sacado.getTipo() != "pokéball":
-                                while True:
-                                    objetivo = int(self.mensaje_batalla(
-                                        f"{self.PLAYER.imprimir_pokemons()}\n///Ah que pokemon le quieres dar la medicina\n== ",
-                                        is_input=True,
-                                        validacion=lambda x: x.isdigit() and 1 <= int(x) <= 6,
-                                        mensaje_raise="escoge un pokemon valido"
-                                    ))-1
-                                    
-                                    
-                                    if (self.PLAYER.equipo_Pokemon[objetivo].getPs() == 0 or
-                                        self.PLAYER.equipo_Pokemon[objetivo].getEspecie() == "NINE" or
-                                        objetivo < 0 or objetivo > 5):
-                                        self.mensaje_batalla("❌❌❌ POR FAVOR ELIGE UNA OPCIÓN VÁLIDA, POR FAVOR ❌❌❌\n")
-                                    else:
-                                        break
-
-
-                                pokemon_a_sanar = self.PLAYER.equipo_Pokemon[objetivo]
-                                if pokemon_a_sanar.recibir_objeto(objeto_sacado):
-                                    self.mensaje_batalla(f"🍂🍂🍂 SE AH USADO EL OBJETOOOO 🍂🍂🍂")
-                                    cami = False
-                                    break
-                                else:
-                                    pass
+                        
+                        if eleccion_uso == 2:
+                            continue
+                        
+                        
+                        if objeto_sacado.getTipo() != "pokéball":
+                            while True:
+                                objetivo = int(self.mensaje_batalla(
+                                    f"{self.PLAYER.imprimir_pokemons()}\n///Ah que pokemon le quieres dar la medicina",
+                                    is_input=True,
+                                    validacion=lambda x: x.isdigit() and 1 <= int(x) <= 6,
+                                    mensaje_raise="escoge un pokemon valido"
+                                ))-1
                                 
-                            else:
-                                if self.validacion == "OFICIAL":
-                                    self.mensaje_batalla("no puedes escapar de un combate contra un entrenador")
-                                    break
+                                
+                                if (self.PLAYER.equipo_Pokemon[objetivo].getPs() == 0 or
+                                    self.PLAYER.equipo_Pokemon[objetivo].getEspecie() == "NINE"
+                                    ):
+                                    self.mensaje_batalla("❌❌❌ POR FAVOR ELIGE UNA OPCIÓN VÁLIDA, POR FAVOR ❌❌❌\n")
+                                    continue
+                                
+                                break
 
-                                if (self.realizar_captura_pokemon(objeto_sacado)):
-                                    cami = False
-                                    return
-                                else:
-                                    break
+                            pokemon_a_sanar = self.PLAYER.equipo_Pokemon[objetivo]
+                            
+                            used, message = pokemon_a_sanar.recibir_objeto(objeto_sacado)
+                            
+                            if used:
+                                self.mensaje_batalla(*message)
+                                cami = False
+                                punto_control_2 = False
+                                break
+                        
+                            
+                        else:
+                            if self.validacion == "OFICIAL":
+                                self.mensaje_batalla("no puedes capturar de un combate contra un entrenador")
+                                continue
+
+                            if self.realizar_captura_pokemon(objeto_sacado):
+                                return
+                            
+                            break
                                 
 
 
@@ -376,7 +383,7 @@ class AlgoritmoDeBatalla:
 
 
 
-            self.relizar_ataques(ataqueDeQuesito, 0)
+            self.relizar_ataques(ataqueDeQuesito, 1)
             self.mensaje_batalla(*self.QUESI.getEstado().realizarDaño(self.QUESI, self.KAIDO))
             self.mensaje_batalla(*self.KAIDO.getEstado().realizarDaño(self.KAIDO, self.QUESI))
             print("❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃\n\n\n\n\n\n")

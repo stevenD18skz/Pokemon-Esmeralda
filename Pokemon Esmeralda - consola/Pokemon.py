@@ -271,9 +271,7 @@ class Pokemon:
 
             print("\nResultado final:")
             print(f"Resultado = {daño}")
-            
-            if self.nombre == "Bulbasaur":
-                exit()
+
             
             
             
@@ -299,7 +297,7 @@ class Pokemon:
 
     #RELACIONES CON DE MAS ENTIDADES
     def recibir_objeto(self, medicina):
-        medicina.aplicar(self)
+        medicina.aplicar_efecto_pokemon(self)
     
 
 

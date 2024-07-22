@@ -77,7 +77,7 @@ class Entrenadores:
             
             eleccion_uso = interfaz_usuario(
                 "U.usar       S.dar\nT.tirar      X.salir",
-                display=self.Mochila.mostrar_bolsillo(),
+                display=self.mochila.mostrar_bolsillo(),
                 is_input=True,
                 validacion=lambda x: x.lower() in ["u","d","t","x",]
             )
@@ -227,48 +227,3 @@ def crear_oponente(campeon):
     return Entrenadores(*datos_campeon, Mochila(), *equipoDelCampeon)
 
 
-"""    def usar_mochila(self):
-        while True:
-            objeto_sacado = self.mochila.abrir_mochila()
-            #no saco ningun objeto
-            if not objeto_sacado:
-                print("(se cierra la mochila)")
-                return
-            
-            eleccion_uso = int(input("1.usar       2.dar\n3.tirar      4.salir\n=="))
-
-            if eleccion_uso == 4:
-                pass
-
-            elif eleccion_uso == 1:
-                if objeto_sacado.getTipo() != "pokéball":
-                    while True:
-                        self.imprimir_pokemons()
-                        objetivo = int(input(f"///Ah que pokemon le quieres dar la medicina\n== "))-1
-                        if (self.equipo_Pokemon[objetivo].getPs() == 0 or
-                            self.equipo_Pokemon[objetivo].getEspecie() == "NINE" or
-                            objetivo < 0 or objetivo > 5):
-                            print("❌❌❌ POR FAVOR ELIGE UNA OPCIÓN VÁLIDA, POR FAVOR ❌❌❌\n")
-                        else:
-                            break
-                    
-                    objeto_sacado.sanarPokemon(self.equipo_Pokemon[objetivo])
-                    print(f"🍂🍂🍂 SE AH USADO EL OBJETOOOO 🍂🍂🍂")
-                
-                else:
-                    print("cada objeto a su tiempo")
-while True:
-    try:
-        self.imprimir_pokemons()
-        objetivo = int(input(f"///Ah que pokemon le quieres dar la medicina\n== "))-1
-        
-        if (self.equipo_Pokemon[objetivo].getPs() == 0 or
-            self.equipo_Pokemon[objetivo].getEspecie() == "NINE" or
-            objetivo < 0 or objetivo > 5):
-            message.append("❌❌❌ POR FAVOR ELIGE UNA OPCIÓN VÁLIDA, POR FAVOR ❌❌❌\n")
-        else:
-            break
-    except:
-        print("hubo un erro")
-"""
-                    

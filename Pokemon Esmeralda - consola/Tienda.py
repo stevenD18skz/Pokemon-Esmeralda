@@ -90,15 +90,17 @@ class Tienda:
         """
         Devuelve una cadena con el inventario de la tienda con los nombres y precios de los objetos.
         """
-        inventario_str =  "         🌟 Inventorio Mágico 🌟           \n"
-        inventario_str += "════════════════════════════════════════════\n"
+        txt = []
+        txt.append("         🌟 Inventorio Mágico 🌟           \n")
+        txt.append("════════════════════════════════════════════\n")
         for i, objeto in enumerate(self.inventario, start=1):
-            inventario_str += f"🔮 {i}. {objeto[0]:<20} 💰 {objeto[1]:>5} monedas\n"
-        inventario_str += "════════════════════════════════════════════\n"
-        inventario_str += "┌────────────────────────┐\n"
-        inventario_str += f"|    Dinero: {self.cliente.getDinero()}    \n"
-        inventario_str += "└────────────────────────┘\n"
-        return inventario_str
+            txt.append(f"🔮 {i}. {objeto[0]:<20} 💰 {objeto[1]:>5} monedas\n")
+        txt.append("════════════════════════════════════════════\n")
+        txt.append("┌────────────────────────┐\n")
+        txt.append(f"|    Dinero: {self.cliente.getDinero()}    \n")
+        txt.append("└────────────────────────┘\n")
+        
+        return "\n".join(txt)
 
 
 

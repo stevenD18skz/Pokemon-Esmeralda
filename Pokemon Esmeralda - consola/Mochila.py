@@ -61,14 +61,17 @@ class Medicina:#✔✔✔
 
 
 
-    def sanarPokemon(self, pokeSanado):#✔✔✔
+    def aplicar_efecto_pokemon(self, pokeSanado):#✔✔✔
+        
+        message = []
+        
         if self.tipo == "Pocion":
             a1 = self.curarPsPokemon(pokeSanado)
 
         if self.tipo == "Restaurador de estado":
             a2 = self.curarEstados(pokeSanado) 
         
-        return a1 or a2
+        return a1 or a2, txt
 
 
 
