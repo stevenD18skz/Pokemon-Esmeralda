@@ -84,7 +84,7 @@ def interfaz_usuario(
                     return None
     
                 else:
-                    print(f"{m}\n🔱⚜️ ==")
+                    print(f"{m}\n🔱⚜️ ==", end="")
                     entrada = readchar.readkey()
                     
                     if validacion and not validacion(entrada):

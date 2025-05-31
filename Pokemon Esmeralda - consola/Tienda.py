@@ -3,40 +3,87 @@ from Entrenador import *
 from data import interfaz_usuario
 
 
+class Estructura:
+    def __init__(self, nombre, tipo_estructura, posicion_entrada_area, representacion_mapa='E'):
+        """
+        Inicializa una estructura genérica.
+
+        Args:
+            nombre (str): Nombre de la estructura (ej: "Tienda Pokémon", "Centro Pokémon").
+            tipo_estructura (str): Un identificador del tipo (ej: "tienda", "centro_pk", "casa").
+            posicion_entrada_area (tuple): Coordenadas (fila, columna) de la entrada de esta
+                                           estructura en el mapa del área que la contiene.
+            representacion_mapa (str): Carácter que representa la entrada de esta estructura
+                                       en el mapa del área.
+        """
+        self.nombre = nombre
+        self.tipo_estructura = tipo_estructura
+        self.posicion_entrada_area = posicion_entrada_area  # Donde se encuentra en el mapa del área
+        self.representacion_mapa = representacion_mapa      # Cómo se dibuja en el mapa del área
+
+    def interactuar(self, jugador, area_actual):
+        """
+        Acción por defecto al interactuar con la estructura desde fuera (ej: leer un cartel).
+        Debería ser sobrescrita por clases hijas para comportamientos específicos.
+        """
+        print(f"Estás frente a {self.nombre}.")
+        # Podrías tener un input genérico aquí o simplemente un mensaje.
+
+    def entrar(self, jugador, area_actual):
+        """
+        Acción por defecto al intentar entrar en la estructura.
+        Debería ser sobrescrita si la estructura tiene un interior explorable o un menú.
+        """
+        print(f"Intentas entrar a {self.nombre}, pero parece genérico por ahora.")
+        # Aquí es donde el juego cambiaría de contexto al interior de la estructura.
+        return None # O un nuevo estado/mapa si se entra.
+
+    def __str__(self):
+        return f"{self.nombre} ({self.tipo_estructura}) en {self.posicion_entrada_area}"
+
+
+
 #CLASE COMPLETA
-class Tienda:
-    """
-    Representa una tienda Pokémon donde los clientes pueden comprar y vender objetos.
-
-    Attributes:
-        nombre (str): El nombre de la tienda.
-        cliente (Cliente): El cliente actual en la tienda.
-        inventario (list): La lista de objetos disponibles en la tienda.
-
-    Methods:
-        mostrar_inventario():
-            Muestra el inventario de la tienda.
-        comprar():
-            Permite al cliente comprar objetos de la tienda.
-        verificar_disponibilidad(objeto, cantidad):
-            Verifica si hay suficiente cantidad de un objeto en la mochila del cliente.
-        vender():
-            Permite al cliente vender objetos a la tienda.
-        salir():
-            Muestra un mensaje de despedida y finaliza la interacción.
-        recibir_jugador(cliente):
-            Inicializa la interacción con un nuevo cliente.
-    """
-
-
-
+class Tienda(Estructura):
     def __init__(self):
         """
-        Inicializa una nueva instancia de la tienda Pokémon con un inventario vacío.
+        Representa una tienda Pokémon donde los clientes pueden comprar y vender objetos.
+
+        Attributes:
+            nombre (str): El nombre de la tienda.
+            cliente (Cliente): El cliente actual en la tienda.
+            inventario (list): La lista de objetos disponibles en la tienda.
+
+        Methods:
+            mostrar_inventario():
+                Muestra el inventario de la tienda.
+            comprar():
+                Permite al cliente comprar objetos de la tienda.
+            verificar_disponibilidad(objeto, cantidad):
+                Verifica si hay suficiente cantidad de un objeto en la mochila del cliente.
+            vender():
+                Permite al cliente vender objetos a la tienda.
+            salir():
+                Muestra un mensaje de despedida y finaliza la interacción.
+            recibir_jugador(cliente):
+                Inicializa la interacción con un nuevo cliente.
         """
         self.nombre = "Tienda Pokemon"
         self.cliente = None
         self.inventario = self.cargar_inventario()
+        self.posicion_entrada_area = (9,7)  # Donde se encuentra en el mapa del área
+        self.mapa_layout_str =  """
+mmmmmmmmmmmmmmmmmmmm
+m000s00000000000000m
+m00ts00000000000000m
+m000s00000000000000m
+m000s00000000000000m
+m000s00000000000000m
+m000s00000000000000m
+mmmmmmmmm9mmmmmmmmmm
+"""
+
+
 
 
 
@@ -335,3 +382,5 @@ class Tienda:
 
             if opciones[accion_tienda.lower()]():
                 return
+            
+
