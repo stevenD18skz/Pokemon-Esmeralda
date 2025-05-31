@@ -4,13 +4,146 @@ import random
 
 
 
-class BosqueViejoPokemon:
+
+class Area:
+    def __init__(self, nombre, char_map):
+        self.nombre = nombre
+        self.char_map = char_map.strip()
+        self.matriz = self.generar_matriz()
+        # Ahora la clave será una tupla (fila, columna)
+        self.mapas_vecinos = {}
+
+    def generar_matriz(self):
+        return [list(fila) for fila in self.char_map.split('\n')]
+
+    def set_vecino_por_coord(self, coord_puerta, area_destino, coord_entrada):
+        """
+        coord_puerta: tupla (fila, columna) indicando dónde está la puerta en este mapa.
+        area_destino: la instancia de Area (o subclase) a la que se quiere ir.
+        coord_entrada: tupla (fila_entrada, col_entrada) indicando dónde debe aparecer el jugador en la nueva área.
+        """
+        self.mapas_vecinos[coord_puerta] = (area_destino, coord_entrada)
+
+    def obtener_vecino_por_coord(self, coord):
+        """
+        Si coord (fila, columna) es una puerta configurada, devuelve (area_destino, coord_entrada).
+        Si no, devuelve None.
+        """
+        return self.mapas_vecinos.get(coord, None)
+
+
+
+class PuebloCosta(Area):
+    def __init__(self):
+        char_map = """
+11111111111111111111
+1000000000000000901
+10000000000000000001
+10000000000000000001
+11111111111111111111
+"""
+        super().__init__(nombre="Pueblo Costa", char_map=char_map)
+
+class CuevaMarina(Area):
+    def __init__(self):
+        char_map = """
+1111111
+1000001
+1090001
+1000001
+1111111
+"""
+        super().__init__(nombre="Cueva Marina", char_map=char_map)
+
+class BarcoPesquero(Area):
+    def __init__(self):
+        char_map = """
+111111111
+100000001
+100090001
+100000001
+111111111
+"""
+        super().__init__(nombre="Barco Pesquero", char_map=char_map)
+
+class Playa(Area):
+    def __init__(self):
+        char_map = """
+111111111111111111111
+100000000000000000001
+100000000020000000021
+100000000000000000001
+100000000000000000001
+900000000000000000009
+100000000000000000001
+100000000000000000001
+100000000000000000001
+100000000000000000001
+111111111111111111111
+"""
+        super().__init__(nombre="Playa", char_map=char_map)
+
+        # Aquí van las tres puertas (en este ejemplo, las casillas con '9'):
+        # - puerta arriba (fila 2, col 20) → PuebloCosta, 
+        # - puerta izquierda (fila 5, col 0) → CuevaMarina, 
+        # - puerta derecha (fila 5, col 20) → BarcoPesquero
+
+        # COORDENADAS basadas en el char_map anterior (cuenta líneas y columnas empezando en 0):
+        # - Puerta 1: en la fila 2, columna 20 (el último '1' de la línea “10000000002........21”)
+        # - Puerta 2: en la fila 5, columna 0   (es ese '9' del char_map)
+        # - Puerta 3: en la fila 5, columna 20  (el último '9' de la línea “900000000000000000009”)
+
+        # NOTA: ajusta las coordenadas si cambias el char_map. Este es un ejemplo ilustrativo.
+
+
+
+
+class Pueblo(Area):
+    def __init__(self):
+        char_map = """
+111111111911111111111
+100000000000000000001
+100000000000000000001
+100000000000000000001
+100000000000000000001
+900000000000000000009
+100000000000000000001
+100000000000000000001
+100000000000000000001
+100000000000000000001
+111111111111111111111
+"""
+        super().__init__(nombre="Pueblo", char_map=char_map)
+        # Aquí podrías inicializar atributos específicos (p. ej., NPCs, tiendas, etc.)
+
+
+
+
+
+class BosqueViejoPokemon(Area):
     def __init__(self):
         """
         Inicializa la clase BosqueViejoPokemon obteniendo las probabilidades de aparición de los Pokémon
         en el Bosque Verde desde la base de datos.
         """
         self.nombre = "Bosque Verde"
+
+        char_map = """
+111111111111111111111
+100000000000000000001
+100000000000000000001
+100000000000000000001
+100000000000000000001
+100000000000000000009
+102000000000000000001
+122202000000000000001
+122222020000000000001
+122222222000000000001
+111111111111111111111
+"""
+
+
+        super().__init__(nombre="Bosque Verde", char_map=char_map)
         consulta_posibilidades = """
         SELECT p.nombre, b.porcentaje_aparicion 
         FROM bosqueverde b 

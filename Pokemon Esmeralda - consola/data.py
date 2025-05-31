@@ -1,4 +1,6 @@
 import os
+import readchar
+
 
 
 #la entrada solo recive numeros
@@ -82,7 +84,8 @@ def interfaz_usuario(
                     return None
     
                 else:
-                    entrada = input(f"{m}\n🔱⚜️ ==")
+                    print(f"{m}\n🔱⚜️ ==")
+                    entrada = readchar.readkey()
                     
                     if validacion and not validacion(entrada):
                         interfaz_usuario(mensaje_raise, display=display)

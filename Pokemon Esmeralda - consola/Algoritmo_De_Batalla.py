@@ -16,10 +16,6 @@ from data import interfaz_usuario
 
 
 
-
-
-
-
 class AlgoritmoDeBatalla:
     def __init__(self):
         self.turno = 1
@@ -463,6 +459,7 @@ class AlgoritmoDeBatalla:
 
 
 
+    #OPCION DE LUCHA
     def LUCHA_CONTRA_ENTRENADOR(self, JUGADOR, OPONENTE):
         self.PLAYER, self.validacion = JUGADOR, "OFICIAL",  
         while True: #self.el_entrenador_puede_seguir(self.PLAYER) and self.el_entrenador_puede_seguir(OPONENTE):
@@ -503,13 +500,11 @@ class AlgoritmoDeBatalla:
 
 
 
-
     def LUCHA_CONTRA_POKEMON(self, JUGADOR, pokemonAEnfrentar):
         self.PLAYER, self.validacion, self.KAIDO, self.QUESI = JUGADOR, "SALVAJE", pokemonAEnfrentar, JUGADOR.equipo_Pokemon[0]
         self.PokemonesQueLucharon.append(self.QUESI)
         self.mensaje_batalla(f"🌳🌳🌳El pokemon {pokemonAEnfrentar.getNombre()} ah salido de un arbusto🌳🌳🌳")
         self.mensaje_batalla(f"{pokemonAEnfrentar.getNombre()} está listo para luchar, tu combate contra el pokemon salvaje comienza")
-        
         
         while True:
             self.ALGORITMO_DE_LA_BATALLA(pokemonAEnfrentar)
@@ -523,3 +518,53 @@ class AlgoritmoDeBatalla:
                 
                 self.acciones_al_terminar_la_lucha(False)
                 return
+            
+
+    def LUCHA_DE_DOS_POKEMONES(self, JUGADOR, pokemonAEnfrentar):
+        pass
+
+
+
+    def LUCHA_CONTRA_TRIPLES(self, JUGADOR, pokemonAEnfrentar):
+        pass
+
+
+
+    def LUCHA_CONTRA_ORDAS_POKEMONES(self, JUGADOR, *args):
+        for pokemonAEnfrentar in args:
+            self.PLAYER, self.validacion, self.KAIDO, self.QUESI = JUGADOR, "ORDAS", args[0], JUGADOR.equipo_Pokemon[0]
+            self.PokemonesQueLucharon.append(self.QUESI)
+            self.mensaje_batalla(f"🌳🌳🌳El pokemon {self.KAIDO.getNombre()} ah salido de un arbusto🌳🌳🌳")
+            self.mensaje_batalla(f"{self.KAIDO.getNombre()} está listo para luchar, tu combate contra el pokemon salvaje comienza")
+            
+            while True:
+                self.ALGORITMO_DE_LA_BATALLA(pokemonAEnfrentar)
+
+                if self.PLAYER.equipo_Pokemon[0].getPs() == 0:
+                    self.mensaje_batalla(f"{pokemonAEnfrentar.getNombre()} Ah vencido a {self.PLAYER.equipo_Pokemon[0].getNombre()}")
+                    self.acciones_al_terminar_la_lucha(True)
+
+                else:#el jugador le gano al pokemon
+                    self.mensaje_batalla("˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚            🏅🏅🏅🏅🏅🏅🏅🏅 FELICIDADES, HAS PODIDO DERROTAR AL POKEMON SALVAJE 🏅🏅🏅🏅🏅🏅🏅 ˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚")
+                    
+                    self.acciones_al_terminar_la_lucha(False)
+                    break
+
+
+
+    def LUCHA_CONTRA_ORDAS_ENTRENADORES(self, JUGADOR, pokemonAEnfrentar):
+        self.PLAYER, self.validacion, self.KAIDO, self.QUESI = JUGADOR, "ORDAS", pokemonAEnfrentar, JUGADOR.equipo_Pokemon[0]
+        self.PokemonesQueLucharon.append(self.QUESI)
+        self.mensaje_batalla(f"🌳🌳🌳El pokemon {pokemonAEnfrentar.getNombre()} ah salido de un arbusto🌳🌳🌳")
+        self.mensaje_batalla(f"{pokemonAEnfrentar.getNombre()} está listo para luchar, tu combate contra el pokemon salvaje comienza")
+        
+        while True:
+            self.ALGORITMO_DE_LA_BATALLA(pokemonAEnfrentar)
+
+            if self.PLAYER.equipo_Pokemon[0].getPs() == 0:
+                self.mensaje_batalla(f"{pokemonAEnfrentar.getNombre()} Ah vencido a {self.PLAYER.equipo_Pokemon[0].getNombre()}")
+                self.acciones_al_terminar_la_lucha(True)
+
+            else:
+                self.mensaje_batalla("")
+

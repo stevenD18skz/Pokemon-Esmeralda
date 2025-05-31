@@ -48,36 +48,36 @@ class Estado:
 
     def mostrar_informacion(self):#✔✔✔
         # Imprimimos el menú con los datos del estado Normal
-        print(f"◤────────────────────────────────────◥")
-        print(f"🌀El estado {self.nombre} tiene las características:🌀")
-        print("┌────────────────────────────────────┐")
-        print(f"│   Tipo: {self.tipo}  |")
-        print(f"│   Daño: {str(self.dañoAplicado)}  |")
-        print(f"│   Probabilidad de moverse: {str(self.pctjeInmovilizacion)}  |")
-        print(f"│   Bono en captura: {str(self.BonoEnCaptura)}  |")
-        print(f"│   Reducción estadística: {", ".join(self.reduccionEstadistica)}  |")
-        print("└────────────────────────────────────┘")
-        print(f"◣────────────────────────────────────◢")
+        print(f"""  ◤────────────────────────────────────◥
+                \nf"🌀El estado {self.nombre} tiene las características:🌀
+                \nf"┌────────────────────────────────────┐
+                \nf"│   Tipo: {self.tipo}  |
+                \nf"│   Daño: {str(self.dañoAplicado)}  |
+                \nf"│   Probabilidad de moverse: {str(self.pctjeInmovilizacion)}  |
+                \nf"│   Bono en captura: {str(self.BonoEnCaptura)}  |
+                \nf"│   Reducción estadística: {", ".join(self.reduccionEstadistica)}  |
+                \nf"└────────────────────────────────────┘
+                \nf"◣────────────────────────────────────◢""")
 
 
 
     def aplicar_segundo_efecto(self, pokemonAfectado):#✔✔✔
-            mensajes = []
-            if self.reduccionEstadistica[0] == "0":
-                return mensajes
-
-            # Obtén las funciones set y get correspondientes a la estadística que se va a reducir
-            funcion_set = getattr(pokemonAfectado, 'set' + self.reduccionEstadistica[0][1:-1])
-            funcion_get = getattr(pokemonAfectado, 'get' + self.reduccionEstadistica[0][1:-1])
-
-            # Calcula la reducción
-            reduccion = int(funcion_get() * int(self.reduccionEstadistica[1]) / 100)
-
-            # Aplica la reducción
-            funcion_set(reduccion)
-
-            mensajes.append(f"🦽🦽🦽 A {pokemonAfectado.getNombre()} se le ha reducido en un {int(self.reduccionEstadistica[1])}% la estadística de {self.reduccionEstadistica[0]}, esta queda en {reduccion} 🦽🦽🦽")
+        mensajes = []
+        if self.reduccionEstadistica[0] == "0":
             return mensajes
+
+        # Obtén las funciones set y get correspondientes a la estadística que se va a reducir
+        funcion_set = getattr(pokemonAfectado, 'set' + self.reduccionEstadistica[0][1:-1])
+        funcion_get = getattr(pokemonAfectado, 'get' + self.reduccionEstadistica[0][1:-1])
+
+        # Calcula la reducción
+        reduccion = int(funcion_get() * int(self.reduccionEstadistica[1]) / 100)
+
+        # Aplica la reducción
+        funcion_set(reduccion)
+
+        mensajes.append(f"🦽🦽🦽 A {pokemonAfectado.getNombre()} se le ha reducido en un {int(self.reduccionEstadistica[1])}% la estadística de {self.reduccionEstadistica[0]}, esta queda en {reduccion} 🦽🦽🦽")
+        return mensajes
 
 
 
@@ -109,6 +109,9 @@ class Estado:
         cursor.execute(consulta_estado)
         estado_consultado = cursor.fetchall()[0][1:]
         pokemon_afectado.setEstado(Estado(*estado_consultado))
+
+
+        
     def ver_si_se_puede_mover(self, pokemon_afectado):#✔✔✔
         mensajes = []
         if random.randint(1,100) < (pokemon_afectado.getEstado().getPctjeInmovilizacion()):
