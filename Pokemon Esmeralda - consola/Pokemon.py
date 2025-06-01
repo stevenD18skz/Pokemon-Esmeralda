@@ -239,6 +239,7 @@ class Pokemon:
                 SELECT efectividad
                 FROM tipo
                 WHERE tipo_atacante = '{attack_type.lower()}' AND tipo_receptor = '{defense_type.lower()}'"""
+            print(f"ataque = {attack_type.lower()}, defensa = {defense_type.lower()}, querry = {query}")
             return cursor.execute(query).fetchall()[0][0]
 
         efc1 = get_effectiveness(ATAQUE.getTipo(), enemigo.getTipo())
@@ -514,6 +515,13 @@ class Pokemon:
 
     def getMovimiento(self, selec):
         return self.slotsDeMovimientos[selec]
+    
+    def getCantidadDeMovimientos(self):
+        cont = 0
+        for movimiento in self.slotsDeMovimientos:
+            if movimiento.getNombre() != "":
+                cont += 1
+        return cont
 
     def setMovimiento(self, nuevoMovimiento):
         self.movimientos.append(nuevoMovimiento)

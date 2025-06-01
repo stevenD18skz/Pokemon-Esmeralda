@@ -32,6 +32,13 @@ class Area:
         coord_entrada: tupla (fila_entrada, col_entrada) indicando dónde debe aparecer el jugador en la nueva área.
         """
         self.mapas_vecinos[coord_puerta] = (area_destino, coord_entrada)
+
+    def obtener_vecino_por_coord(self, coord):
+        """
+        Si coord (fila, columna) es una puerta configurada, devuelve (area_destino, coord_entrada).
+        Si no, devuelve None.
+        """
+        return self.mapas_vecinos.get(coord, None)
     
 
 
@@ -148,6 +155,8 @@ class BosqueViejoPokemon(Area):
 """
         super().__init__(nombre=self.nombre, mapa_layout_str=mapa_layout_str)
 
+        self.probabilidad_encuentro = 20
+
         consulta_posibilidades = f"""
         SELECT p.nombre, b.porcentaje_aparicion 
         FROM {self.nombre} b 
@@ -166,6 +175,7 @@ class BosqueViejoPokemon(Area):
         :param opciones: Un diccionario con los nombres de los Pokémon y sus probabilidades de aparición.
         :return: El nombre del Pokémon que aparece.
         """
+        return "Bulbasaur"
         total_probabilidad = sum(opciones.values())
         probabilidad_acumulada = 0
         num_aleatorio = random.uniform(0, 1)

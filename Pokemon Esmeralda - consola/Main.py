@@ -192,6 +192,8 @@ class Game:
                         return
             
                     pokemon_salvaje = self.mapa_actual.crear_pokemon_salvaje()
+                    print(pokemon_salvaje.mostrar_informacion())
+                    input("Presiona Enter para continuar...")
                     fitgh = AlgoritmoDeBatalla()
                     fitgh.LUCHA_CONTRA_POKEMON(self.steven, pokemon_salvaje)
         
