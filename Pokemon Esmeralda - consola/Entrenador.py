@@ -2,6 +2,7 @@ from Pokemon import *
 from Mochila import *
 from data import interfaz_usuario
 
+from Pokedex import Pokedex
 
 
 class Entrenadores:
@@ -15,6 +16,9 @@ class Entrenadores:
         self.contadorVictorias = 0
         self.contadorDerrotas = 0
         self.equipo_Pokemon = [pk_1, pk_2, pk_3, pk_4, pk_5, pk_6]
+
+        self.pokedex = Pokedex()
+
 
 
 
@@ -147,6 +151,8 @@ class Entrenadores:
 
     def getMochila(self):
         return self.mochila
+
+
 
 
 

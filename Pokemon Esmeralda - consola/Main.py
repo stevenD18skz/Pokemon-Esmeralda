@@ -1,6 +1,6 @@
 from Algoritmo_De_Batalla import *
-from Bosque import *
-from Tienda import *
+from Area import *
+from Estrucutra import *
 
 
 import os
@@ -72,6 +72,8 @@ class Game:
                                    )
         
         self.debuggin = f""
+
+        input("¡Bienvenido al juego! Presiona Enter para comenzar...")
     
 
 
@@ -193,7 +195,8 @@ class Game:
                     fitgh = AlgoritmoDeBatalla()
                     fitgh.LUCHA_CONTRA_POKEMON(self.steven, pokemon_salvaje)
         
-        
+
+
     def run(self):
         while True:
             eleccion = interfaz_usuario(
@@ -208,8 +211,7 @@ class Game:
                 mensaje_raise="Opción no válida. Intenta de nuevo."
             ).upper()
 
-            if eleccion.upper() == "E":
-                # Menú interno, igual que antes, pero usando self.main_display()
+            if eleccion.upper() == "E": 
                 while True:
                     eleccion_menu = interfaz_usuario(
                         f"""──────────────────────────────────────────────
@@ -231,7 +233,7 @@ class Game:
                     )
 
                     if eleccion_menu == "1":
-                        print("Pokedex: ¡Aún no disponible!")
+                        self.steven.pokedex.iniciar_interfaz()
                     elif eleccion_menu == "2":
                         interfaz_usuario(self.steven.imprimir_pokemons(), display=self.main_display(), is_input=False)
                         input("Presiona Enter para continuar...")
