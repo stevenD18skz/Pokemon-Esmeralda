@@ -9,14 +9,19 @@ class Pokedex:
         - self.pokemon: lista de objetos Pokemon agregados (vistos).
         - self.pokemon_vistos: conjunto de nombres para evitar duplicados.
         """
-        consulta = "SELECT * FROM pokemon"  # Cambia el ID según lo que necesites
+        consulta = "SELECT nombre FROM pokemon"  # Cambia el ID según lo que necesites
         datos_del_pokemon = cursor.execute(consulta).fetchall()
         print(datos_del_pokemon)
 
+        self.pokemon = [self.crear_pokemon_pokedex(p) for p in 
+                        ['Bulbasaur', 'Ivysaur', 'Chikorita', 'Treecko', 'Turtwig', 'Snivy', 'Rowlet', 'Squirtle', 'Totodile', 'Mudkip', 'Piplup', 'Oshawott', 'Popplio', 'Charmander', 'Cyndaquil', 'Torchic', 'Chimchar', 'Tepig', 'Litten', 'Chespin', 'Fennekin', 'Froakie', 'Grookey', 'Scorbunny', 'Sobble', 'Dragonite', 'Gyarados', 'Charizard', 'Dragonair', 'Salamence', 'Garchomp']
+                        ]
+        self.pokemon_vistos = set(['Bulbasaur', 'Chikorita', 'Turtwig'])
 
-
-        self.pokemon = [self.crear_pokemon_pokedex(p) for p in ["Bulbasaur", "Chikorita", "Fennekin", "Cyndaquil", "Chimchar", "Squirtle", "Garchomp", "Grookey", "Rowlet", "Totodile"]]
-        self.pokemon_vistos = set()
+        self.focus_index = 0
+        self.visible_index = 0
+        self.max_visible_index = 10
+        self.max_per_page = 10  
 
 
     def crear_pokemon_pokedex(self, nombrePokemon, nivel=50):
@@ -24,6 +29,8 @@ class Pokedex:
         datos_del_pokemon = cursor.execute(consulta).fetchall()[0]
         pokemon_creado = Pokemon(*datos_del_pokemon[1:15],*[None, None, None, None], nivel)
         return pokemon_creado
+
+
 
     def agregar_pokemon(self, pokemon_obj):
         """
@@ -34,6 +41,8 @@ class Pokedex:
             self.pokemon.append(pokemon_obj)
             self.pokemon_vistos.add(pokemon_obj.nombre)
 
+
+
     def construir_display_lista(self):
         """
         Construye el texto que se mostrará en la pantalla principal de la Pokédex:
@@ -42,25 +51,35 @@ class Pokedex:
         - Una pequeña instrucción al pie con la tecla para salir
         """
         líneas = []
+        líneas.append(f"visibles: {self.visible_index} - {self.max_visible_index} pk {len(self.pokemon)}\n")
+        líneas.append(f"foco: {self.focus_index}\n")
         líneas.append("📒─── TU POKÉDEX ───📒\n")
-        líneas.append("Índice | Nombre               | Tipo         | Nivel\n")
-        líneas.append("────────────────────────────────────────────────────────\n")
+        líneas.append("  Índice | Nombre               | Tipo         | Nivel\n")
+        líneas.append("───────────────────────────────────────────────────────────\n")
 
         if not self.pokemon:
             líneas.append("  (Aún no has agregado ningún Pokémon.)\n")
         else:
-            for idx, p in enumerate(self.pokemon, start=1):
+            indice = self.visible_index + 1
+            for  p in self.pokemon[self.visible_index:self.max_visible_index]:
                 # Nombre alineado a 20 caracteres, tipo a 12, nivel a 3
+                focus = "👉" if self.focus_index == indice - 1 else "  "
                 nombre = p.nombre[:20].ljust(20)
                 # Si tu clase Pokemon tuviese dos tipos, podrías hacer: f"{p.tipo1}/{p.tipo2}"
                 tipo = getattr(p, "tipo", "?")  # Si no existe atributo "tipo", se pone "?"
                 tipo = str(tipo)[:12].ljust(12)
                 nivel = str(getattr(p, "nivel", "?")).rjust(3)
-                líneas.append(f"  {idx:>2}    | {nombre} | {tipo} | {nivel}\n")
+                estatus = "🎃" if p.nombre in self.pokemon_vistos else "👻"  # Emoji de visto
+
+                líneas.append(f"{focus} {indice:>2}    | {nombre} | {tipo} | {nivel} {estatus} \n")
+                
+                indice += 1
 
         líneas.append("\nPulsa el número del Pokémon para ver detalles.\n")
         líneas.append("O pulsa 'x' para salir de la Pokédex.\n")
         return "".join(líneas)
+
+
 
     def ver_detalles(self, pokemon_obj):
         """
@@ -119,6 +138,8 @@ class Pokedex:
         # Mostramos el detalle, y esperamos a que pulse algo para regresar
         interfaz_usuario(texto_detalle, is_input=False)
 
+
+
     def iniciar_interfaz(self):
         """
         Loop principal de la Pokédex. Muestra la lista y permite:
@@ -128,52 +149,43 @@ class Pokedex:
         """
         while True:
             # 1) Construimos la pantalla con la lista de Pokémon
-            display = self.construir_display_lista()
-
-            # 2) Pedimos un input al usuario (digit o 'x')
-            def validación_sel(c):
-                # Aceptamos 'x' o cualquier dígito que corresponda a un Pokémon existente
-                if c.lower() == "x":
-                    return True
-                if c.isdigit():
-                    n = int(c)
-                    return 1 <= n <= len(self.pokemon)
-                return False
-
             sel = interfaz_usuario(
                 "¿Qué quieres hacer?",
-                display=display,
+                display=self.construir_display_lista(),
                 is_input=True,
-                validacion=validación_sel,
-                mensaje_raise="Por favor, pulsa un número válido o 'x' para salir."
+                validacion=lambda x: x.upper() in ["X", "W", "S", "E"],
+                mensaje_raise="Por favor, pulsa una opcion valida o 'x' para salir."
             )
 
-            if sel.lower() == "x":
-                # Salimos de la Pokédex
+            # Salimos de la Pokédex
+            if sel == "x":
                 break
 
             # Si no es 'x', es un dígito
-            idx = int(sel) - 1
-            pokemon_elegido = self.pokemon[idx]
+            direction = {
+                'W': -1,  # Mover hacia arriba
+                'S': 1,   # Mover hacia abajo
+            }
+
             # Lo marcamos como “visto” (en realidad ya debe estar en la lista),
             # y mostramos detalles
-            self.ver_detalles(pokemon_elegido)
+            if sel == "E":
+                pokemon_elegido = self.pokemon[self.focus_index]
+                self.ver_detalles(pokemon_elegido)
 
-        # Cuando se rompe el while, retornamos al juego
+
+            
+            else:
+                self.focus_index = min(max(0, self.focus_index + direction.get(sel, 0)), len(self.pokemon) - 1)
+
+                if sel == "S":
+                    self.max_visible_index = max(self.max_visible_index,  self.focus_index + 1)
+                    self.visible_index = self.max_visible_index - self.max_per_page
+                
+                elif sel == "W":    
+                    self.visible_index = min(self.visible_index,  self.focus_index - 1)
+                    self.max_visible_index = self.visible_index + self.max_per_page
+
+
         return
 
-# ----------------------------
-# Ejemplo de uso en tu juego:
-# ----------------------------
-
-# Supongamos que en alguna parte de tu código principal de juego tú vas
-# recopilando instancias de Pokemon en combate o al encontrar uno salvaje:
-#
-#   mi_pokedex = Pokedex()
-#   ...
-#   # Cuando “ves” o “atrapas” un Pokémon:
-#   mi_pokedex.agregar_pokemon(un_objeto_pokemon)
-#   ...
-#   # En algún menú general del juego, si pulsan la tecla 'P' (por ejemplo),
-#   # abres la Pokédex:
-#   mi_pokedex.iniciar_interfaz()

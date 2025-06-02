@@ -110,7 +110,7 @@ def interfaz_usuario(
     for m in mensaje:
         e = funcion_interna(m)
         
-    return e
+    return e.upper() if e else None
         
     
 

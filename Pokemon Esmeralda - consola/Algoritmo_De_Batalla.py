@@ -141,32 +141,6 @@ class AlgoritmoDeBatalla:
                 return seleccion_ataque
             
 
-
-    def relizar_ataques(self, ataqueDeQuesito, ataqueDelOponente):
-        sorted_pokemones = sorted([self.QUESI, self.KAIDO], key=lambda pokemonExm: pokemonExm.getVelocidad(), reverse=True)
-        datosParaAtacar = {
-            self.QUESI         :[self.QUESI,         ataqueDeQuesito,   self.KAIDO],
-            self.KAIDO :[self.KAIDO, ataqueDelOponente, self.QUESI]
-        }
-
-        for atacante in sorted_pokemones:
-            if atacante.getPs() == 0 or datosParaAtacar[atacante][1] == -1:
-                continue
-
-            puede_moverse, mensajes = atacante.getEstado().ver_si_se_puede_mover(atacante)
-            self.mensaje_batalla(*mensajes)
-            
-            if not puede_moverse:
-                self.mensaje_batalla("🧶🧶🧶Es el momento de atacar de " + atacante.getNombre() + " 🧶🧶🧶")
-                self.mensaje_batalla(f"🥊🥊🥊{atacante.getNombre()} ah usado el movimiento {atacante.getMovimiento(datosParaAtacar[atacante][1]).getNombre()}🥊🥊🥊")
-                mensaje_ataque = atacante.Atacar(datosParaAtacar[atacante][2], datosParaAtacar[atacante][1])
-                self.mensaje_batalla(*mensaje_ataque)
-                self.mensaje_batalla(f"💔💔💔los ps de {datosParaAtacar[atacante][2].getNombre()} quedan en {datosParaAtacar[atacante][2].getPs()}💔💔💔")
-
-
-
-
-
     #OPCION DE MOCHILA
     def realizar_captura_pokemon(self, BallLanzada):
         PSmax = self.KAIDO.getMps()
@@ -199,7 +173,7 @@ class AlgoritmoDeBatalla:
             return False
 
 
-
+    #OPCION DE CAMBIO DE POKEMON
     def get_pokemon_selection(self):
         EXIT_OPTION = "x"
         MIN_POKEMON_INDEX = 0
@@ -235,8 +209,6 @@ class AlgoritmoDeBatalla:
     
 
 
-
-
     #OPCION DE POKEMON
     def switch_pokemon(self, seleccion_cambio):
         MIN_POKEMON_INDEX = 0
@@ -244,8 +216,6 @@ class AlgoritmoDeBatalla:
         self.PokemonesQueLucharon.append(self.PLAYER.equipo_Pokemon[seleccion_cambio])
         self.PLAYER.equipo_Pokemon[seleccion_cambio], self.PLAYER.equipo_Pokemon[MIN_POKEMON_INDEX] = self.PLAYER.equipo_Pokemon[MIN_POKEMON_INDEX], self.PLAYER.equipo_Pokemon[seleccion_cambio]
         self.QUESI = self.PLAYER.equipo_Pokemon[MIN_POKEMON_INDEX]
-
-
 
 
 
@@ -268,9 +238,29 @@ class AlgoritmoDeBatalla:
         
 
 
+    def relizar_ataques(self, ataqueDeQuesito, ataqueDelOponente):
+        sorted_pokemones = sorted([self.QUESI, self.KAIDO], key=lambda pokemonExm: pokemonExm.getVelocidad(), reverse=True)
+        datosParaAtacar = {
+            self.QUESI         :[self.QUESI,         ataqueDeQuesito,   self.KAIDO],
+            self.KAIDO :[self.KAIDO, ataqueDelOponente, self.QUESI]
+        }
+
+        for atacante in sorted_pokemones:
+            if atacante.getPs() == 0 or datosParaAtacar[atacante][1] == -1:
+                continue
+
+            puede_moverse, mensajes = atacante.getEstado().ver_si_se_puede_mover(atacante)
+            self.mensaje_batalla(*mensajes)
+            
+            if not puede_moverse:
+                self.mensaje_batalla("🧶🧶🧶Es el momento de atacar de " + atacante.getNombre() + " 🧶🧶🧶")
+                self.mensaje_batalla(f"🥊🥊🥊{atacante.getNombre()} ah usado el movimiento {atacante.getMovimiento(datosParaAtacar[atacante][1]).getNombre()}🥊🥊🥊")
+                mensaje_ataque = atacante.Atacar(datosParaAtacar[atacante][2], datosParaAtacar[atacante][1])
+                self.mensaje_batalla(*mensaje_ataque)
+                self.mensaje_batalla(f"💔💔💔los ps de {datosParaAtacar[atacante][2].getNombre()} quedan en {datosParaAtacar[atacante][2].getPs()}💔💔💔")
 
 
-
+    
 
 
     def ALGORITMO_DE_LA_BATALLA(self, pokemonRival):
@@ -304,7 +294,7 @@ class AlgoritmoDeBatalla:
                         
                         #no saco ningun objeto
                         if not objeto_sacado:
-                            self.mensaje_batalla("(se cierra la mochila)")
+                            self.mensaje_batalla("(se cerro la mochila)")
                             break
 
                         eleccion_uso = int(self.mensaje_batalla(
@@ -383,9 +373,6 @@ class AlgoritmoDeBatalla:
             self.mensaje_batalla(*self.QUESI.getEstado().realizarDaño(self.QUESI, self.KAIDO))
             self.mensaje_batalla(*self.KAIDO.getEstado().realizarDaño(self.KAIDO, self.QUESI))
             print("❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃\n\n\n\n\n\n")
-
-
-
 
 
 
@@ -519,6 +506,7 @@ class AlgoritmoDeBatalla:
                 self.acciones_al_terminar_la_lucha(False)
                 return
             
+
 
     def LUCHA_DE_DOS_POKEMONES(self, JUGADOR, pokemonAEnfrentar):
         pass

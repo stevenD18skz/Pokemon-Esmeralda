@@ -32,29 +32,11 @@ TODO:
 
 
 
+
 class Game:
     def __init__(self):
-        # Instancias de las áreas
-        self.pueblo = Pueblo()
-        self.bosque = BosqueViejoPokemon()
-        self.playa  = Playa()
-        
-        # Configuramos la relación de vecinos:
-        # # Vinculamos los vecinos en “Pueblo”:
-        self.pueblo.set_vecino_por_coord((5, 0),  self.bosque, coord_entrada=(5, 20))
-        self.pueblo.set_vecino_por_coord((5, 20), self.playa, coord_entrada=(5, 0))
-
-        # Vinculamos los vecinos en “Bosque”:
-        self.bosque.set_vecino_por_coord((5, 20), self.pueblo, coord_entrada=(5, 0))
-  
-        # Vinculamos los vecinos en “Playa”:
-        self.playa.set_vecino_por_coord((5, 0), self.pueblo, coord_entrada=(5, 20))
-    
-
-
         # Definimos el área inicial:
-        self.mapa_actual = self.pueblo
-        # Matriz de caracteres actual (lista de listas)
+        self.mapa_actual = self.load_area("bosque")
         self.matriz = [fila[:] for fila in self.mapa_actual.matriz]
 
         self.player_x, self.player_y = 5, 9
@@ -72,43 +54,34 @@ class Game:
                                    )
         
         self.debuggin = f""
-
-        input("¡Bienvenido al juego! Presiona Enter para comenzar...")
+        
     
 
+    def load_area(self, area_name):
+        # Instancias de las áreas
+        self.pueblo = Pueblo()
+        self.bosque = BosqueViejoPokemon()
+        self.playa  = Playa()
+        
+        # Configuramos la relación de vecinos:
+        # # Vinculamos los vecinos en “Pueblo”:
+        self.pueblo.set_vecino_por_coord((5, 0),  self.bosque, coord_entrada=(5, 20))
+        self.pueblo.set_vecino_por_coord((5, 20), self.playa, coord_entrada=(5, 0))
 
-    def main_display(self):
-        """
-        Dibuja la pantalla actual basada en self.matriz.
-        """
-        assets = {
-            '0': "🟩",  # Ground
-            '1': "🌳",  # Tree (Wall)
-            '2': "🌱",  # Bush (Walkable)
-            '3': "🦚",  # Elder Bush
-            '4': "🌼",  # Flower
-            '5': "🪵",  # Log
-            '6': "🌊",  # Flower
-            '7': "🌴",  # Palm Tree
-            '8': "🪨",  # Water
-            '9': "🚪",   # Door
-            '10': "🙎",   # Trainer
-            "H": "🏠",  # House
-            "S": "🏪",  # Store
-            "F": "🏥",  # Hospital
-            'P': "👤",  # Player
-        }
-        txt = []
-        txt.append("──────────────────────────────────────────────")
-        txt.append(f"👤 Jugador: {self.steven.getNombre()}   💰 Dinero: {self.steven.getDinero()}    ⏰ Hora: 12:00 PM  pos({self.player_x}, {self.player_y})")
-        txt.append(f"dbg = {self.debuggin}")
-        txt.append("──────────────────────────────────────────────")
+        # Vinculamos los vecinos en “Bosque”:
+        self.bosque.set_vecino_por_coord((5, 20), self.pueblo, coord_entrada=(5, 0))
+  
+        # Vinculamos los vecinos en “Playa”:
+        self.playa.set_vecino_por_coord((5, 0), self.pueblo, coord_entrada=(5, 20))
 
-        for fila in self.matriz:
-            linea = "".join(assets.get(char, char) for char in fila)
-            txt.append(linea)
-        return "\n".join(txt)
-
+        # Devolvemos el área inicial:
+        if area_name == "pueblo":
+            return self.pueblo
+        if area_name == "bosque":
+            return self.bosque
+        if area_name == "playa":
+            return self.playa
+        
 
 
     def cambiar_mapa(self, nueva_area, coord_entrada):
@@ -133,6 +106,40 @@ class Game:
 
 
 
+    def main_display(self):
+        """
+        Dibuja la pantalla actual basada en self.matriz.
+        """
+        assets = {
+            '0': "🟩",  # Ground
+            '1': "🌳",  # Tree (Wall)
+            '2': "🌱",  # Bush (Walkable)
+            '3': "🦚",  # Elder Bush
+            '4': "🌼",  # Flower
+            '5': "🪵",  # Log
+            '6': "🌊",  # Flower
+            '7': "🌴",  # Palm Tree
+            '8': "🪨",  # Water
+            '9': "🚪",   # Door
+            'T': "🙎",   # Trainer
+            "H": "🏠",  # House
+            "S": "🏪",  # Store
+            "F": "🏥",  # Hospital
+            'P': "👤",  # Player
+        }
+        txt = []
+        txt.append("──────────────────────────────────────────────")
+        txt.append(f"👤 Jugador: {self.steven.getNombre()}   💰 Dinero: {self.steven.getDinero()}    ⏰ Hora: 12:00 PM  pos({self.player_x}, {self.player_y})")
+        txt.append(f"dbg = {self.debuggin}")
+        txt.append("──────────────────────────────────────────────")
+
+        for fila in self.matriz:
+            linea = "".join(assets.get(char, char) for char in fila)
+            txt.append(linea)
+        return "\n".join(txt)
+
+
+
     def mover_jugador(self, direccion):
         """
         - Se lee self.mapa_actual.matriz a través de self.matriz.
@@ -150,52 +157,50 @@ class Game:
         new_y = self.player_y + dy
 
         # Verificar límites:
-        if 0 <= new_x < len(self.matriz) and 0 <= new_y < len(self.matriz[0]):
-            destino = self.matriz[new_x][new_y]
+        if not (0 <= new_x < len(self.matriz) and 0 <= new_y < len(self.matriz[0])) or self.matriz[new_x][new_y] == '1':
+            return
 
-            if destino in ["H", 'S', 'F']:
-                self.mapa_actual.store.recibir_jugador(self.steven)
-            
-            if destino == '1':
+
+
+        destino = self.matriz[new_x][new_y]
+
+        if destino in ["H", 'S', 'F']:
+            self.mapa_actual.store.recibir_jugador(self.steven)
+        
+        
+        # 1) Restaurar tile anterior
+        self.matriz[self.player_x][self.player_y] = self.tile_under_player
+
+        # 2) Actualizar qué tile hay bajo el jugador
+        self.tile_under_player = destino
+
+        # 3) Mover el jugador
+        self.player_x, self.player_y = new_x, new_y
+        self.matriz[self.player_x][self.player_y] = 'P'
+
+        # 4) Si pisa una puerta ('9'), ver si hay vecino:
+        coord_actual = (self.player_x, self.player_y)
+        
+        if self.tile_under_player == '9':
+            vecino_info = self.mapa_actual.obtener_vecino_por_coord(coord_actual)
+            area_destino, coord_entrada = vecino_info
+            self.cambiar_mapa(area_destino, coord_entrada)
+
+
+        elif self.tile_under_player == '2': #0 255
+            numero = random.randint(1, 1) 
+            if not numero < self.mapa_actual.probabilidad_encuentro:
                 return
-            
-            # 1) Restaurar tile anterior
-            self.matriz[self.player_x][self.player_y] = self.tile_under_player
-
-            # 2) Actualizar qué tile hay bajo el jugador
-            self.tile_under_player = destino
-
-            # 3) Mover el jugador
-            self.player_x, self.player_y = new_x, new_y
-            self.matriz[self.player_x][self.player_y] = 'P'
-
-            # 4) Si pisa una puerta ('9'), ver si hay vecino:
-            coord_actual = (self.player_x, self.player_y)
-            
-            if self.tile_under_player == '9':
-                vecino_info = self.mapa_actual.obtener_vecino_por_coord(coord_actual)
-                
-                if vecino_info is not None:
-                    area_destino, coord_entrada = vecino_info
-                    self.cambiar_mapa(area_destino, coord_entrada)
-                else:
-                    interfaz_usuario(
-                        "No hay nada aquí.",
-                        display=self.main_display(),
-                        is_input=False
-                    )
-
-            else:
-                if self.tile_under_player == '2':
-                    numero = random.randint(0, 255)
-                    if not numero < self.mapa_actual.probabilidad_encuentro:
-                        return
-            
-                    pokemon_salvaje = self.mapa_actual.crear_pokemon_salvaje()
-                    print(pokemon_salvaje.mostrar_informacion())
-                    input("Presiona Enter para continuar...")
-                    fitgh = AlgoritmoDeBatalla()
-                    fitgh.LUCHA_CONTRA_POKEMON(self.steven, pokemon_salvaje)
+    
+            pokemon_salvaje = self.mapa_actual.crear_pokemon_salvaje()
+            fitgh = AlgoritmoDeBatalla()
+            fitgh.LUCHA_CONTRA_POKEMON(self.steven, pokemon_salvaje)
+        
+        elif self.tile_under_player == 'T':  # Si pisa un entrenador
+            #entrenador = self.mapa_actual.obtener_entrenador_en_posicion(self.player_x, self.player_y)
+            entrenador = crear_oponente("Lance")
+            fitgh = AlgoritmoDeBatalla()
+            fitgh.LUCHA_CONTRA_ENTRENADOR(self.steven, entrenador)
         
 
 
@@ -211,7 +216,7 @@ class Game:
                 is_input=True,
                 validacion=lambda x: x.upper() in ["W", "A", "S", "D", "E", "X"],
                 mensaje_raise="Opción no válida. Intenta de nuevo."
-            ).upper()
+            )
 
             if eleccion.upper() == "E": 
                 while True:
