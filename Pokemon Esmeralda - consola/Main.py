@@ -207,10 +207,8 @@ class Game:
     def run(self):
         while True:
             eleccion = interfaz_usuario(
-                f"""──────────────────────────────────────────────
-                \n📋 Acciones:
+                f"""📋 Acciones:
                 \nE. Menú          X. Salir del juego
-                \n──────────────────────────────────────────────
                 \nPresiona W/A/S/D para moverte, o elige una acción:""",
                 display=self.main_display(),
                 is_input=True,

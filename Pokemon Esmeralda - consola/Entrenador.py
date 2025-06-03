@@ -151,6 +151,9 @@ class Entrenadores:
 
     def getMochila(self):
         return self.mochila
+    
+    def getCantidadDePokemons(self):
+        return len([pk for pk in self.equipo_Pokemon if pk.getEspecie() != "NINE"]) 
 
 
 

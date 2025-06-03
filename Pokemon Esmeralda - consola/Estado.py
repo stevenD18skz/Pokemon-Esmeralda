@@ -2,8 +2,6 @@ import sqlite3
 import random
 import os
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
-#OPCION 3
-
 
 conexion = sqlite3.connect('data_base/pokemonRojoFuego.db')
 cursor = conexion.cursor()
