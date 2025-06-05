@@ -8,6 +8,8 @@ from enum import Enum
 
 
 
+BACK_OPTION = "X"
+
 class AccionCombate(Enum):
     LUCHAR = 1
     MOCHILA = 2
@@ -107,30 +109,25 @@ class AlgoritmoDeBatalla:
 
     #OPCION DE ATACAR
     def get_attack_selection(self):
-        # Define constants
-        BACK_OPTION = "x"
-
         while True:
             seleccion_ataque = self.mensaje_batalla(
                 f"⚔⚔¿que ataque deberia usar {self.CURRENTFIGHTER.getNombre()}⚔⚔:\n {self.CURRENTFIGHTER.mostrarAtaques()}\n{BACK_OPTION}. Atras",
                 is_input=True,
-                validacion=lambda x: x == "X" or 1 <= int(x) <= self.CURRENTFIGHTER.getCantidadDeMovimientos(),
-                mensaje_raise="❌❌❌Escoge una Opcion valida porfavor❌❌❌"
+                validacion=lambda x: x == BACK_OPTION or 1 <= int(x) <= self.CURRENTFIGHTER.getCantidadDeMovimientos(),
+                mensaje_raise=f"❌❌❌Escoge una Opcion valida porfavor❌❌❌"
             )
 
-            if seleccion_ataque == "X":
+            if seleccion_ataque == BACK_OPTION:
                 return None
 
             seleccion_ataque = int(seleccion_ataque) - 1 
             selected_attack = self.CURRENTFIGHTER.getMovimiento(seleccion_ataque)
 
-
-            
             if selected_attack.getPP() == 0:
                 self.mensaje_batalla(f"❌❌❌{selected_attack.getNombre()} no se puede realizar ya que su pp es 0❌❌❌")
+                continue
                 
-            else:
-                return seleccion_ataque
+            return seleccion_ataque
             
 
     #OPCION DE MOCHILA
