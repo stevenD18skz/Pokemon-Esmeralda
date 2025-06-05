@@ -198,7 +198,7 @@ class Game:
         
         elif self.tile_under_player == 'T':  # Si pisa un entrenador
             #entrenador = self.mapa_actual.obtener_entrenador_en_posicion(self.player_x, self.player_y)
-            entrenador = crear_oponente("Maximo")
+            entrenador = crear_oponente("Lance")
             fitgh = AlgoritmoDeBatalla()
             fitgh.LUCHA_CONTRA_ENTRENADOR(self.steven, entrenador)
         
