@@ -9,12 +9,24 @@ from enum import Enum
 
 
 BACK_OPTION = "X"
+VICTORY_MESSAGE = """
+˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚ 
+                                        \n✨✨✨✨✨ FELICIDADES {self.PLAYER.getNombre()}, HAS LOGRADO VENCER A {OPONENTE.getNombre()}, Y HAS GANADO EL COMBATE ✨✨✨✨✨ 
+                                        \n˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚")
+                                        \nHas ganado 1000 dólares por vencer.
+
+
+
+
+"""
 
 class AccionCombate(Enum):
     LUCHAR = 1
     MOCHILA = 2
     CAMBIAR = 3
     HUIDA = 4
+
+
 
 class EstadoCombate(Enum):
     VICTORIA = "victoria"
@@ -31,7 +43,9 @@ class AlgoritmoDeBatalla:
         self.CURRENTFIGHTER = None
         self.OPPONENTPOKEMON = None
         self.PLAYER = None
+
         self.encounter_type = ""
+        self.ENEMY_TRAINER = None
 
 
 
@@ -64,6 +78,7 @@ class AlgoritmoDeBatalla:
         )
 
 
+
     def barra_de_vida(self, pokemon, tamanno):#✔✔✔
         BV_vida = int(pokemon.getPs() * (tamanno / pokemon.getMps()))
         aux = "|" * BV_vida + "-" * (int(tamanno) - BV_vida)
@@ -71,9 +86,9 @@ class AlgoritmoDeBatalla:
 
     
 
-    def barra_de_pokeballs(self):#⭕🔴⚪⚫✔✔✔
+    def barra_de_pokeballs(self, trainer):#⭕🔴⚪⚫✔✔✔
         barra = ""
-        for pokemon in self.PLAYER.equipo_Pokemon:
+        for pokemon in trainer.equipo_Pokemon:
             if pokemon.getEspecie() == "NINE":
                 barra += "⚪ "
 
@@ -93,16 +108,18 @@ class AlgoritmoDeBatalla:
         PvidaRival = round((self.OPPONENTPOKEMON.getPs() * 100) / self.OPPONENTPOKEMON.getMps())
         Pvida = round((self.CURRENTFIGHTER.getPs() * 100) / self.CURRENTFIGHTER.getMps())
         txt.append(
-            f"{self.OPPONENTPOKEMON.getNombre()}🦅    Nv:{self.OPPONENTPOKEMON.getNivel()}"
+            f"{self.barra_de_pokeballs(self.ENEMY_TRAINER) if self.encounter_type == "ENTRENADOR" else ""}"
+            f"\n{self.OPPONENTPOKEMON.getNombre()}🦅    Nv:{self.OPPONENTPOKEMON.getNivel()}"
             f"\nPS:💙{self.barra_de_vida(self.OPPONENTPOKEMON, 50)}💙 = {self.OPPONENTPOKEMON.getPs()}/{self.OPPONENTPOKEMON.getMps()} = {PvidaRival}%"
             f"\nEstado:{self.OPPONENTPOKEMON.getEstado().getNombre()}"
             "\n\n\n\n\n\n\n"
             f"                                       {self.CURRENTFIGHTER.getNombre()}🐣    Nv:{self.CURRENTFIGHTER.getNivel()}"
             f"\n                                       PS:💙{self.barra_de_vida(self.CURRENTFIGHTER, 50)}💙 = {self.CURRENTFIGHTER.getPs()}/{self.CURRENTFIGHTER.getMps()} = {Pvida}%"
             f"\n                                       Estado:{self.CURRENTFIGHTER.getEstado().getNombre()}                                               EXP:{self.CURRENTFIGHTER.getExperiencia()-(self.CURRENTFIGHTER.Establecer_exp(self.CURRENTFIGHTER.getFormula(), self.CURRENTFIGHTER.getNivel()))}/{(self.CURRENTFIGHTER.Establecer_exp(self.CURRENTFIGHTER.getFormula(), self.CURRENTFIGHTER.getNivel()+1)) - self.CURRENTFIGHTER.Establecer_exp(self.CURRENTFIGHTER.getFormula(), self.CURRENTFIGHTER.getNivel())}"
-            f"\n                                       {self.barra_de_pokeballs()}\n"
+            f"\n                                       {self.barra_de_pokeballs(self.PLAYER)}\n"
         )
         return '\n'.join(txt)
+
 
 
 
@@ -164,49 +181,30 @@ class AlgoritmoDeBatalla:
 
     #OPCION DE CAMBIO DE POKEMON
     def get_pokemon_selection(self):
-        EXIT_OPTION = "x"
-        MIN_POKEMON_INDEX = 0
-        INVALID_POKEMON = "NINE"
-        DEBILITADO = "Debilitado😷"
-
         while True:
             seleccion_cambio = self.mensaje_batalla(
-                f"Escoge el pokemon que deseas que salga a luchar\n{self.PLAYER.imprimir_pokemons()}\nPulsa {EXIT_OPTION} para salir",
+                f"Escoge el pokemon que deseas que salga a luchar\n{self.PLAYER.imprimir_pokemons()}\nPulsa {BACK_OPTION} para salir",
                 is_input=True,
-                validacion=lambda x: x.lower() == "x" or (x.isdigit() and 1 <= int(x) <= 6),
+                validacion=lambda x: x == "X" or  1 <= int(x) <= self.PLAYER.getCantidadDePokemons(),
                 mensaje_raise="❌❌❌Escoge un pokemon valido porfavor❌❌❌"
             )
 
-            if seleccion_cambio.lower() == EXIT_OPTION:
+            if seleccion_cambio == BACK_OPTION:
                 return None
-
 
             seleccion_cambio = int(seleccion_cambio) - 1
             selected_pokemon = self.PLAYER.equipo_Pokemon[seleccion_cambio]
-
-            if selected_pokemon.getEspecie() == INVALID_POKEMON:
-                self.mensaje_batalla(f"❌❌❌Escoge un pokemon valido porfavor❌❌❌")
-                
-            elif selected_pokemon.getEstado().getNombre() == DEBILITADO:
-                self.mensaje_batalla(f"❌❌{selected_pokemon.getNombre()} no ha podido entrar a la batalla debido a que está Debilitado❌❌")
-                
-            elif seleccion_cambio == MIN_POKEMON_INDEX:
-                self.mensaje_batalla(f"❌{selected_pokemon.getNombre()} ya está luchando, selecciona otro pokemon❌")
-                
-            else:
-                return seleccion_cambio
     
-
-
-    #OPCION DE POKEMON
-    def switch_pokemon(self, seleccion_cambio):
-        MIN_POKEMON_INDEX = 0
-        self.mensaje_batalla(f"🔀🔀🔀{self.PLAYER.equipo_Pokemon[MIN_POKEMON_INDEX].getNombre()} ha sido cambio_de_pokemoniado por {self.PLAYER.equipo_Pokemon[seleccion_cambio].getNombre()}🔀🔀🔀")
-        self.PokemonesQueLucharon.append(self.PLAYER.equipo_Pokemon[seleccion_cambio])
-        self.PLAYER.equipo_Pokemon[seleccion_cambio], self.PLAYER.equipo_Pokemon[MIN_POKEMON_INDEX] = self.PLAYER.equipo_Pokemon[MIN_POKEMON_INDEX], self.PLAYER.equipo_Pokemon[seleccion_cambio]
-        self.CURRENTFIGHTER = self.PLAYER.equipo_Pokemon[MIN_POKEMON_INDEX]
-
-
+            if seleccion_cambio == 0:
+                self.mensaje_batalla(f"❌{selected_pokemon.getNombre()} ya está luchando, selecciona otro pokemon❌")
+                continue
+        
+            elif selected_pokemon.getEstado().getNombre() == "Debilitado😷":
+                self.mensaje_batalla(f"❌❌{selected_pokemon.getNombre()} no ha podido entrar a la batalla debido a que está Debilitado❌❌")
+                continue
+                
+            return seleccion_cambio
+    
 
     #OPCION DE HUIR
     def attempt_escape(self):
@@ -226,7 +224,7 @@ class AlgoritmoDeBatalla:
             return False
         
 
-
+    #OPCION DE REALIZAR ATAQUES
     def relizar_ataques(self, ataqueDeQuesito, ataqueDelOponente):
         sorted_pokemones = sorted([self.CURRENTFIGHTER, self.OPPONENTPOKEMON], key=lambda pokemonExm: pokemonExm.getVelocidad(), reverse=True)
         datosParaAtacar = {
@@ -249,14 +247,18 @@ class AlgoritmoDeBatalla:
                 self.mensaje_batalla(f"💔💔💔los ps de {datosParaAtacar[atacante][2].getNombre()} quedan en {datosParaAtacar[atacante][2].getPs()}💔💔💔")
 
 
-    
+    #OPCION DE CAMBIO DE POKEMON
+    def switch_pokemon(self, seleccion_cambio):
+        MIN_POKEMON_INDEX = 0
+        self.mensaje_batalla(f"🔀🔀🔀{self.PLAYER.equipo_Pokemon[MIN_POKEMON_INDEX].getNombre()} ha sido cambio_de_pokemoniado por {self.PLAYER.equipo_Pokemon[seleccion_cambio].getNombre()}🔀🔀🔀")
+        self.PokemonesQueLucharon.append(self.PLAYER.equipo_Pokemon[seleccion_cambio])
+        self.PLAYER.equipo_Pokemon[seleccion_cambio], self.PLAYER.equipo_Pokemon[MIN_POKEMON_INDEX] = self.PLAYER.equipo_Pokemon[MIN_POKEMON_INDEX], self.PLAYER.equipo_Pokemon[seleccion_cambio]
+        self.CURRENTFIGHTER = self.PLAYER.equipo_Pokemon[MIN_POKEMON_INDEX]
 
 
-    def ALGORITMO_DE_LA_BATALLA(self, pokemonRival):
-        self.CURRENTFIGHTER = self.PLAYER.equipo_Pokemon[0]
-        self.OPPONENTPOKEMON = pokemonRival
-        self.PokemonesQueLucharon.append(self.CURRENTFIGHTER)
 
+    #ALGORITMO DE LA BATALLA
+    def ALGORITMO_DE_LA_BATALLA(self):
         while self.CURRENTFIGHTER.getPs() > 0 and self.OPPONENTPOKEMON.getPs() > 0:
             mainSeleccion = 0
             ataqueDeQuesito = -1
@@ -331,7 +333,7 @@ class AlgoritmoDeBatalla:
                             
                                 
                             else:
-                                if self.encounter_type == "OFICIAL":
+                                if self.encounter_type == "ENTRENADOR":
                                     self.mensaje_batalla("no puedes capturar de un combate contra un entrenador")
                                     continue
 
@@ -350,7 +352,7 @@ class AlgoritmoDeBatalla:
 
 
                     case AccionCombate.HUIDA:
-                        if self.encounter_type == "OFICIAL":
+                        if self.encounter_type == "ENTRENADOR":
                             self.mensaje_batalla("no puedes escapar de un combate contra un entrenador")
                         elif self.attempt_escape():
                             return EstadoCombate.HUIDA
@@ -364,8 +366,7 @@ class AlgoritmoDeBatalla:
             self.mensaje_batalla("❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃ႣᄎႣ❃\n\n\n\n\n\n")
 
 
-
-
+    #ACCIONES AL TERMINAR LA LUCHA
     def acciones_al_terminar_la_lucha(self, estado: EstadoCombate):
         if estado == EstadoCombate.VICTORIA:
             experiencia_individual = round(round((self.OPPONENTPOKEMON.getExp_Base() * self.OPPONENTPOKEMON.getNivel() * 1.5) / 7) / len(self.PokemonesQueLucharon))
@@ -431,37 +432,37 @@ class AlgoritmoDeBatalla:
             self.mensaje_batalla("🏃‍♂️🏃‍♂️🏃‍♂️ Has huido del combate. 🏃‍♂️🏃‍♂️🏃‍♂️")
 
 
-
+    #VERIFICAR SI EL ENTRENADOR PUEDE SEGUIR
     def el_entrenador_puede_seguir(self, Entrenador_a_revisar):
         return any(pokemon.getPs() != 0 and pokemon.getEspecie() != "NINE" for pokemon in Entrenador_a_revisar.equipo_Pokemon)
 
 
 
-
-
-
-    #OPCION DE LUCHA
+    """
+    METODOS PARA LAS BATALLAS
+    """
     def LUCHA_CONTRA_ENTRENADOR(self, JUGADOR, OPONENTE):
-        self.PLAYER, self.encounter_type = JUGADOR, "OFICIAL",  
-        while True: #self.el_entrenador_puede_seguir(self.PLAYER) and self.el_entrenador_puede_seguir(OPONENTE):
-            self.mensaje_batalla(f"🍸🍸🍸 {OPONENTE.getNombre()} HA SACADO A {OPONENTE.equipo_Pokemon[0].getNombre()} AL COMBATE 🍸🍸🍸")
+        self.PLAYER, self.ENEMY_TRAINER, self.encounter_type = JUGADOR, OPONENTE, "ENTRENADOR",  
+        while True:
+            
+            self.CURRENTFIGHTER = self.PLAYER.equipo_Pokemon[0]
+            self.OPPONENTPOKEMON = self.ENEMY_TRAINER.equipo_Pokemon[0]
+            self.PokemonesQueLucharon.append(self.CURRENTFIGHTER)
+            self.mensaje_batalla(f"🍸🍸🍸 {self.ENEMY_TRAINER.getNombre()} HA SACADO A {self.ENEMY_TRAINER.equipo_Pokemon[0].getNombre()} AL COMBATE 🍸🍸🍸")
 
-            resultado = self.ALGORITMO_DE_LA_BATALLA(OPONENTE.equipo_Pokemon[0])
-            self.acciones_al_terminar_la_lucha(resultado)
+            resultado_lucha = self.ALGORITMO_DE_LA_BATALLA()
+            self.acciones_al_terminar_la_lucha(resultado_lucha)
 
-            if resultado == EstadoCombate.VICTORIA:
-                self.mensaje_batalla(f"🏅🏅🏅🏅🏅🏅🏅🏅 FELICIDADES, HAS PODIDO DERROTAR AL {OPONENTE.equipo_Pokemon[0].getNombre()} DE {OPONENTE.getNombre()} 🏅🏅🏅🏅🏅🏅🏅")
+            if resultado_lucha == EstadoCombate.VICTORIA:
+                self.mensaje_batalla(f"🏅FELICIDADES, HAS PODIDO DERROTAR AL {OPONENTE.equipo_Pokemon[0].getNombre()} DE {OPONENTE.getNombre()} 🏅")
                 del OPONENTE.equipo_Pokemon[0]
 
                 if not self.el_entrenador_puede_seguir(OPONENTE):
-                    self.mensaje_batalla(f"""˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚ 
-                                        \n✨✨✨✨✨ FELICIDADES {self.PLAYER.getNombre()}, HAS LOGRADO VENCER A {OPONENTE.getNombre()}, Y HAS GANADO EL COMBATE ✨✨✨✨✨ 
-                                        \n˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚")
-                                        \nHas ganado 1000 dólares por vencer.""")
+                    self.mensaje_batalla(f"""VENCISTE A  {OPONENTE.getNombre()}, Y HAS GANAS EL COMBATE Has ganado 1000 dólares por vencer.""")
                     self.PLAYER.setDinero(1000)
                     break
 
-            elif resultado == EstadoCombate.DERROTA:
+            elif resultado_lucha == EstadoCombate.DERROTA:
                 self.mensaje_batalla(f"El {OPONENTE.equipo_Pokemon[0].getNombre()} ha vencido a tu Pokémon.")
                 if not self.el_entrenador_puede_seguir(self.PLAYER):
                     self.mensaje_batalla(f"""💥💥💥El combate ya no puede continuar ya que el entrenador {self.PLAYER.getNombre()} se ha quedado sin pokemon 💥💥💥")
@@ -472,10 +473,9 @@ class AlgoritmoDeBatalla:
 
                 self.mensaje_batalla(f"🍂🍂🍂 {self.PLAYER.equipo_Pokemon[0].getNombre()}  se ha debilitado, {self.PLAYER.equipo_Pokemon[1].getNombre()}  ha salido al combate 🍂🍂🍂")
 
-            elif resultado == EstadoCombate.HUIDA:
+            elif resultado_lucha == EstadoCombate.HUIDA:
                 self.mensaje_batalla("🏃‍♂️🏃‍♂️🏃‍♂️ Has huido del combate. 🏃‍♂️🏃‍♂️🏃‍♂️")
                 break
-
 
 
     def LUCHA_CONTRA_POKEMON(self, JUGADOR, pokemonAEnfrentar):
@@ -503,11 +503,6 @@ class AlgoritmoDeBatalla:
             elif resultado == EstadoCombate.HUIDA:
                 self.mensaje_batalla("🏃‍♂️🏃‍♂️🏃‍♂️ Has huido del combate. 🏃‍♂️🏃‍♂️🏃‍♂️")
                 break
-
-
-
-    
-
 
 
     def LUCHA_DE_DOS_POKEMONES(self, JUGADOR, pokemonAEnfrentar):

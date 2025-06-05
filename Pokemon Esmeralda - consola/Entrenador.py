@@ -5,7 +5,7 @@ from data import interfaz_usuario
 from Pokedex import Pokedex
 
 
-class Entrenadores:
+class Entrenador:
     def __init__(self, nombre, dinero, edad, estatus, mochila,
                  pk_1, pk_2, pk_3, pk_4, pk_5, pk_6):
         self.nombre = nombre
@@ -252,16 +252,14 @@ def crear_oponente(campeon):
         WHERE id_campeon = "{campeon}";
     """
     datos_equipo = cursor.execute(consultar_datos_equipo).fetchall()
-    equipoDelCampeon = []
 
+    equipoDelCampeon = []
     for i in range(6):
         try:
             equipoDelCampeon.append(crear_pokemon_campeon(datos_equipo[i][1:]))
         except:
             equipoDelCampeon.append(crear_pokemon_entrenador(""))
 
-    #equipoDelCampeon = [crear_pokemon_campeon(datos_equipo[i][1:]) if i < len(datos_equipo) else crear_pokemon_entrenador("") for i in range(6)]
-    #equipoDelCampeon = map(lambda x: crear_pokemon_campeon(x[1:]), datos_equipo)
-    return Entrenadores(*datos_campeon, Mochila(), *equipoDelCampeon)
+    return Entrenador(*datos_campeon, Mochila(), *equipoDelCampeon)
 
 

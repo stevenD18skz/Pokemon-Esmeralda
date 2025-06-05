@@ -44,7 +44,7 @@ class Game:
         self.matriz[self.player_x][self.player_y] = 'P'
         
         # Instancias para el sistema de batalla, tienda, jugador, etc.
-        self.steven = Entrenadores("Steven", 100000, 15, "entrenador pokemon", Mochila(),
+        self.steven = Entrenador("Steven", 100000, 15, "entrenador pokemon", Mochila(),
                                    crear_pokemon_entrenador("Sobble"),
                                    crear_pokemon_entrenador("Ivysaur"),
                                    crear_pokemon_entrenador("Bulbasaur"),
@@ -198,7 +198,7 @@ class Game:
         
         elif self.tile_under_player == 'T':  # Si pisa un entrenador
             #entrenador = self.mapa_actual.obtener_entrenador_en_posicion(self.player_x, self.player_y)
-            entrenador = crear_oponente("Lance")
+            entrenador = crear_oponente("Maximo")
             fitgh = AlgoritmoDeBatalla()
             fitgh.LUCHA_CONTRA_ENTRENADOR(self.steven, entrenador)
         
