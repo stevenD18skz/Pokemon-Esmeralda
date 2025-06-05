@@ -57,7 +57,7 @@ class Game:
         
     
 
-    def load_area(self, area_name):
+    def load_area(self, area_name="pueblo"):
         # Instancias de las áreas
         self.pueblo = Pueblo()
         self.bosque = BosqueViejoPokemon()
@@ -239,9 +239,14 @@ class Game:
 
                     if eleccion_menu == "1":
                         self.steven.pokedex.iniciar_interfaz()
+
+
+
                     elif eleccion_menu == "2":
-                        interfaz_usuario(self.steven.imprimir_pokemons(), display=self.main_display(), is_input=False)
-                        input("Presiona Enter para continuar...")
+                        self.steven.ver_pokemons()
+
+
+
                     elif eleccion_menu == "3":
                         self.steven.usar_mochila()
                         input("Presiona Enter para continuar...")

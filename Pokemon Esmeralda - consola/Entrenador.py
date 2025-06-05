@@ -47,6 +47,35 @@ class Entrenadores:
         
         return '\n'.join(txt)
 
+    def ver_pokemons(self):
+        while True:
+            opcion = interfaz_usuario(
+                "Elige un Pokémon para ver sus detalles u oprime 0 para Volver al menú anterior",
+                display=self.imprimir_pokemons(),
+                is_input=True,
+                validacion=lambda x: x.isdigit() and 0 <= int(x) <= 6,
+                mensaje_raise="❌❌❌ POR FAVOR ELIGE UNA OPCIÓN VÁLIDA, POR FAVOR ❌❌❌"
+            )
+            opcion = int(opcion)
+            if opcion == 0:
+                return "Volviendo al menú anterior..."
+
+            pokemon = self.equipo_Pokemon[opcion - 1]
+
+            while True:
+                salir = interfaz_usuario(
+                    "presiona X para volver al menú anterior",
+                    display=pokemon.mostrar_informacion(),
+                    is_input=True
+                )
+
+                if salir.upper() == "X":
+                    break
+
+                
+            
+            
+            
 
 
     def Adquirir_Pokemon(self, poke):#✔✔✔
@@ -164,7 +193,7 @@ class Entrenadores:
 def crear_pokemon_entrenador(nombrePokemon, nivel = 50):
     consulta = "SELECT * FROM pokemon WHERE nombre = '" + nombrePokemon + "'"
     datos_del_pokemon = cursor.execute(consulta).fetchall()[0]
-    id_movimientos = ['3','11','8','12']
+    id_movimientos = ['3','11','8','1']
     moivimietos_creados = []
     for x in range(4):
         consulta_del_movimiento = "SELECT * FROM movimiento WHERE id_movimiento = '" + str(id_movimientos[x]) + "'"

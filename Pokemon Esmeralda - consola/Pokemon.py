@@ -142,6 +142,7 @@ class Pokemon:
         txt.append(f"│  Pnt.Efz: {", ".join(map(str, self.puntosDeEzfuerzo))}         │")
         txt.append("└────────────────────────────────────┘")
         txt.append(f"◣────────────────────────────────────◢")
+        txt.append(f"◣{self.slotsDeMovimientos[3].mostrar_informacion()}◢")
         
         return "\n".join(txt)
 
