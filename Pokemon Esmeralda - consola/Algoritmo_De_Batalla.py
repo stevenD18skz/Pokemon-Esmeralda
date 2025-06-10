@@ -9,16 +9,7 @@ from enum import Enum
 
 
 BACK_OPTION = "X"
-VICTORY_MESSAGE = """
-˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚ 
-                                        \n✨✨✨✨✨ FELICIDADES {self.PLAYER.getNombre()}, HAS LOGRADO VENCER A {OPONENTE.getNombre()}, Y HAS GANADO EL COMBATE ✨✨✨✨✨ 
-                                        \n˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚˚✧₊⁎❝ົཽ≀ˍ̮ຽ⁎⁺˳✧༚")
-                                        \nHas ganado 1000 dólares por vencer.
 
-
-
-
-"""
 
 class AccionCombate(Enum):
     LUCHAR = 1
@@ -264,7 +255,6 @@ class AlgoritmoDeBatalla:
             ataqueDeQuesito = -1
             cami = True
 
-
             while cami:
                 mainSeleccion = AccionCombate(
                     int(self.mensaje_batalla(
@@ -289,11 +279,12 @@ class AlgoritmoDeBatalla:
                             
                             #no saco ningun objeto
                             if not objeto_sacado:
-                                self.mensaje_batalla("(se cerro la mochila)")
-                                break
+                                self.mensaje_batalla("(se cerro la mochila sin sacar nigun objeto)")
+                                punto_control_2 = False
+                                continue
 
                             eleccion_uso = int(self.mensaje_batalla(
-                                "1.usar       2.salir",
+                                "1.usar       2.salir(escoger otro)",
                                 is_input=True,
                                 validacion=lambda x: x in ['1','2'],
                                 mensaje_raise="Escoge una opcion entre (1 . 2)"
@@ -301,46 +292,41 @@ class AlgoritmoDeBatalla:
                             
                             if eleccion_uso == 2:
                                 continue
-                            
-                            
-                            if objeto_sacado.getTipo() != "pokéball":
-                                while True:
-                                    objetivo = int(self.mensaje_batalla(
-                                        f"{self.PLAYER.imprimir_pokemons()}\n///Ah que pokemon le quieres dar la medicina",
-                                        is_input=True,
-                                        validacion=lambda x: x.isdigit() and 1 <= int(x) <= 6,
-                                        mensaje_raise="escoge un pokemon valido"
-                                    ))-1
-                                    
-                                    
-                                    if (self.PLAYER.equipo_Pokemon[objetivo].getPs() == 0 or
-                                        self.PLAYER.equipo_Pokemon[objetivo].getEspecie() == "NINE"
-                                        ):
-                                        self.mensaje_batalla("❌❌❌ POR FAVOR ELIGE UNA OPCIÓN VÁLIDA, POR FAVOR ❌❌❌\n")
-                                        continue
-                                    
-                                    break
 
-                                pokemon_a_sanar = self.PLAYER.equipo_Pokemon[objetivo]
-                                
-                                used, message = pokemon_a_sanar.recibir_objeto(objeto_sacado)
-                                
-                                if used:
-                                    self.mensaje_batalla(*message)
-                                    cami = False
-                                    punto_control_2 = False
-                                    break
-                            
-                                
-                            else:
+                            if objeto_sacado.getTipo() == "pokéball":
                                 if self.encounter_type == "ENTRENADOR":
                                     self.mensaje_batalla("no puedes capturar de un combate contra un entrenador")
                                     continue
 
-                                if self.realizar_captura_pokemon(objeto_sacado):
+                                capturo_pokemon = self.realizar_captura_pokemon(objeto_sacado)
+                                if capturo_pokemon:
                                     return
                                 
+                                cami = False
+                                punto_control_2 = False
+                                
+
+                            
+                            objetivo = int(self.mensaje_batalla(
+                                f"{self.PLAYER.imprimir_pokemons()}\n///Ah que pokemon le quieres dar la medicina",
+                                is_input=True,
+                                validacion=lambda x: x.isdigit() and 1 <= int(x) <= self.PLAYER.getCantidadDePokemons(),
+                                mensaje_raise="escoge un pokemon valido"
+                            ))-1
+
+
+
+                            pokemon_a_sanar = self.PLAYER.equipo_Pokemon[objetivo]
+                            used, messages = pokemon_a_sanar.recibir_objeto(objeto_sacado)
+
+                            if used:
+                                self.mensaje_batalla(*messages)
+                                cami = False
+                                punto_control_2 = False
                                 break
+                        
+                                
+    
                                     
                                     
                 
@@ -485,7 +471,7 @@ class AlgoritmoDeBatalla:
         self.mensaje_batalla(f"{pokemonAEnfrentar.getNombre()} está listo para luchar, tu combate contra el pokemon salvaje comienza")
         
         while True:            
-            resultado = self.ALGORITMO_DE_LA_BATALLA(pokemonAEnfrentar)
+            resultado = self.ALGORITMO_DE_LA_BATALLA()
             self.acciones_al_terminar_la_lucha(resultado)
 
             if resultado == EstadoCombate.VICTORIA: 
@@ -523,7 +509,7 @@ class AlgoritmoDeBatalla:
             self.mensaje_batalla(f"{self.OPPONENTPOKEMON.getNombre()} está listo para luchar, tu combate contra el pokemon salvaje comienza")
             
             while True:
-                self.ALGORITMO_DE_LA_BATALLA(pokemonAEnfrentar)
+                self.ALGORITMO_DE_LA_BATALLA()
 
                 if self.PLAYER.equipo_Pokemon[0].getPs() == 0:
                     self.mensaje_batalla(f"{pokemonAEnfrentar.getNombre()} Ah vencido a {self.PLAYER.equipo_Pokemon[0].getNombre()}")
@@ -544,7 +530,7 @@ class AlgoritmoDeBatalla:
         self.mensaje_batalla(f"{pokemonAEnfrentar.getNombre()} está listo para luchar, tu combate contra el pokemon salvaje comienza")
         
         while True:
-            self.ALGORITMO_DE_LA_BATALLA(pokemonAEnfrentar)
+            self.ALGORITMO_DE_LA_BATALLA()
 
             if self.PLAYER.equipo_Pokemon[0].getPs() == 0:
                 self.mensaje_batalla(f"{pokemonAEnfrentar.getNombre()} Ah vencido a {self.PLAYER.equipo_Pokemon[0].getNombre()}")
