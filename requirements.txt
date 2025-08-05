@@ -1,0 +1,10 @@
+# Dependencias principales del proyecto Pokémon Esmeralda
+readchar==4.0.5
+
+# Dependencias del sistema (incluidas en Python estándar)
+# sqlite3 - Incluido en Python estándar
+# os - Incluido en Python estándar  
+# random - Incluido en Python estándar
+# math - Incluido en Python estándar
+# time - Incluido en Python estándar
+# enum - Incluido en Python estándar
